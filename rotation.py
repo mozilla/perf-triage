@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import pickle
 import random
 
 
@@ -7,6 +8,12 @@ class Person:
     name: str
     nick: str
     lead: bool = False
+
+
+@dataclass
+class Rotation:
+    leader: Person
+    sheriffs: list
 
 
 members = [
@@ -31,26 +38,56 @@ members = [
     Person("Sean Feng", "sefeng", True),
 ]
 
-leaders = [m for m in members if m.lead]
-leaders = random.sample(leaders, len(leaders))
+ROTATIONS = 2
+HISTORY = "rotations.pickle"
+
+try:
+    with open(HISTORY, "rb") as f:
+        history = pickle.load(f)
+except FileNotFoundError:
+    history = []
+
 rotations = []
+leaders = [m for m in members if m.lead]
+leader_candidates = leaders.copy()
+# remove recent leaders from pool
+for r in history[(len(leaders) - ROTATIONS) * -1 :]:
+    if r.leader in leader_candidates:
+        leader_candidates.remove(r.leader)
 
-for index, leader in enumerate(leaders):
-    candidates = members.copy()
+leader_candidates = random.sample(leader_candidates, ROTATIONS)
+
+for index, leader in enumerate(leader_candidates):
+    sheriff_candidates = members.copy()
     # remove leader from pool
-    candidates.remove(leader)
+    sheriff_candidates.remove(leader)
     # remove recent sheriffs from pool
-    for recent in rotations[-4:]:
-        for sheriff in recent:
-            if sheriff in candidates:
-                candidates.remove(sheriff)
+    for r in history[-4:]:
+        for sheriff in r.sheriffs:
+            if sheriff in sheriff_candidates:
+                sheriff_candidates.remove(sheriff)
     # remove upcoming leaders from pool
-    for sheriff in leaders[index + 1 : index + 5]:
-        if sheriff in candidates:
-            candidates.remove(sheriff)
+    for sheriff in leader_candidates[index + 1 : index + 5]:
+        if sheriff in sheriff_candidates:
+            sheriff_candidates.remove(sheriff)
     # pick sheriffs for each triage rotation
-    sample = random.sample(candidates, 2)
-    rotations.append([leader] + sample)
+    sheriffs = random.sample(sheriff_candidates, 2)
+    rotations.append(Rotation(leader, sheriffs))
 
-for rotation in rotations[:26]:
-    print(", ".join([f"{s.name} [:{s.nick}]" for s in rotation]))
+print("\nNEW ROTATIONS:")
+for r in rotations:
+    print(
+        f" * {r.leader.name} [{r.leader.nick}],",
+        ", ".join([f"{s.name} [:{s.nick}]" for s in r.sheriffs]),
+    )
+
+print("\nRECENT ROTATIONS:")
+for r in reversed(history):
+    print(
+        f" * {r.leader.name} [{r.leader.nick}],",
+        ", ".join([f"{s.name} [:{s.nick}]" for s in r.sheriffs]),
+    )
+
+history.extend(rotations)
+with open(HISTORY, "wb") as f:
+    pickle.dump(history[len(leaders) * -1 :], f)
