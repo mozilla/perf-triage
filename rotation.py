@@ -9,11 +9,17 @@ class Person:
     nick: str
     lead: bool = False
 
+    def __repr__(self):
+        return f"{self.name} [{self.nick}]"
+
 
 @dataclass
 class Rotation:
     leader: Person
     sheriffs: list
+
+    def __repr__(self):
+        return f"{self.leader}, {self.sheriffs}"
 
 
 members = [
@@ -75,18 +81,10 @@ for index, leader in enumerate(leader_candidates):
     rotations.append(Rotation(leader, sheriffs))
 
 print("\nNEW ROTATIONS:")
-for r in rotations:
-    print(
-        f" * {r.leader.name} [{r.leader.nick}],",
-        ", ".join([f"{s.name} [:{s.nick}]" for s in r.sheriffs]),
-    )
+[print(r) for r in rotations]
 
 print("\nRECENT ROTATIONS:")
-for r in reversed(history):
-    print(
-        f" * {r.leader.name} [{r.leader.nick}],",
-        ", ".join([f"{s.name} [:{s.nick}]" for s in r.sheriffs]),
-    )
+[print(r) for r in reversed(history)]
 
 history.extend(rotations)
 with open(HISTORY, "wb") as f:
