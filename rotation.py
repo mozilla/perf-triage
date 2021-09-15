@@ -32,7 +32,7 @@ members = [
 ]
 
 leaders = [m for m in members if m.lead]
-leaders = random.sample(leaders, len(leaders)) * 3
+leaders = random.sample(leaders, len(leaders))
 rotations = []
 
 for index, leader in enumerate(leaders):
