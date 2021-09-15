@@ -21,7 +21,6 @@ members = [
     Person("Gerald Squelart", "gerald", True),
     Person("Gregory Mierzwinski", "sparky", True),
     Person("Julien Wajsberg", "julienw", True),
-    Person("Kim Moir", "kmoir"),
     Person("Marc Leclair", "mleclair"),
     Person("Markus Stange", "mstange", True),
     Person("Michael Comella", "mcomella", True),
