@@ -47,7 +47,7 @@ members = [
 ]
 
 DATE = datetime.now(timezone.utc)
-STATE = Path("state/rotations.pickle")
+STATE = Path("rotations.pickle")
 
 
 def generate_html(rotations):

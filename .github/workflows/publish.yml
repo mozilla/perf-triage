@@ -1,6 +1,7 @@
-name: Deploy to GitHub pages
+name: Generate rotation
 
 on:
+  push:
   schedule:
     - cron: '0 0 * * 1'  # every Monday at midnight
 
@@ -9,51 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-      with:
-        persist-credentials: false
-        fetch-depth: 0
 
-    - uses: actions/checkout@v2
-      with:
-        ref: state
-        path: state
-
-    - name: Generate rotation report
+    - name: Generate report
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
     - run: python rotation.py
 
-    - name: Commit generated report
+    - name: Push results
       run: |
-        cd report
-        git init
         git add -A
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git commit -m 'publish'
-
-    - name: Force push report to gh-pages
-      uses: ad-m/github-push-action@v0.6.0
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: gh-pages
-        force: true
-        directory: ./report
-
-    - name: Commit state
-      run: |
-        cd state
-        git init
-        git add -A
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
         git commit -m 'update'
-
-    - name: Force push state
-      uses: ad-m/github-push-action@v0.6.0
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: state
-        force: true
-        directory: ./state
+        git push
