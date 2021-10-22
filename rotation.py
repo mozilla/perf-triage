@@ -66,7 +66,7 @@ def generate_html(rotations):
         for s in rotations[-1].sheriffs:
             html.write(f"<li>{s}</li>")
         html.write(f"</ol><h2>History</h2><ul>")
-        for r in reversed(rotations[2:]):
+        for r in reversed(rotations[:-2]):
             html.write(f"<li><strong>{r.leader}</strong>, {r.sheriffs}</li>")
         html.write("</ul></body></html>")
 
