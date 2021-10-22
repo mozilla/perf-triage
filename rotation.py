@@ -91,6 +91,8 @@ def generate_rotation():
     sheriff_candidates.remove(leader)
     # remove recent sheriffs from pool
     for r in rotations[-4:]:
+        if r.leader in sheriff_candidates:
+            sheriff_candidates.remove(r.leader)
         for sheriff in r.sheriffs:
             if sheriff in sheriff_candidates:
                 sheriff_candidates.remove(sheriff)
