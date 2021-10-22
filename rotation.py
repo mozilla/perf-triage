@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
 import pickle
 import random
 
@@ -44,12 +46,35 @@ members = [
     Person("Sean Feng", "sefeng", True),
 ]
 
+DATE = datetime.now(timezone.utc)
 ROTATIONS = 2
 HISTORY = "rotations.pickle"
 
+
+def generate_html(rotations, history):
+    path = Path("report")
+    path.mkdir(exist_ok=True)
+    fpath = (path / "index.html").with_suffix(".html")
+    with fpath.open(mode="w+") as html:
+        html.write("<html><body><h1>Performance Triage</h1>")
+        html.write(f"<p>Generated on {DATE}.</p>")
+        html.write(f"<h2>This week</h2><ol>")
+        html.write(f"<li><strong>{rotations[0].leader}</strong></li>")
+        for s in rotations[0].sheriffs:
+            html.write(f"<li>{s}</li>")
+        html.write(f"</ol><h2>Next week</h2><ol>")
+        html.write(f"<li><strong>{rotations[1].leader}</strong></li>")
+        for s in rotations[1].sheriffs:
+            html.write(f"<li>{s}</li>")
+        html.write(f"</ol><h2>History</h2><ul>")
+        for r in reversed(history):
+            html.write(f"<li><strong>{r.leader}</strong>, {r.sheriffs}</li>")
+        html.write("</ul></body></html>")
+
+
 try:
-    with open(HISTORY, "rb") as f:
-        history = pickle.load(f)
+    with open(HISTORY, "rb") as html:
+        history = pickle.load(html)
 except FileNotFoundError:
     history = []
 
@@ -68,7 +93,7 @@ for index, leader in enumerate(leader_candidates):
     # remove leader from pool
     sheriff_candidates.remove(leader)
     # remove recent sheriffs from pool
-    for r in history[-4:]:
+    for r in rotations + history[-4:]:
         for sheriff in r.sheriffs:
             if sheriff in sheriff_candidates:
                 sheriff_candidates.remove(sheriff)
@@ -80,12 +105,16 @@ for index, leader in enumerate(leader_candidates):
     sheriffs = random.sample(sheriff_candidates, 2)
     rotations.append(Rotation(leader, sheriffs))
 
-print("\nNEW ROTATIONS:")
-[print(r) for r in rotations]
+print(f"Generated on {DATE}\n")
 
-print("\nRECENT ROTATIONS:")
+print(f"This week: {rotations[0]}")
+print(f"Next week: {rotations[1]}")
+
+print("\nPrevious rotations:")
 [print(r) for r in reversed(history)]
 
+generate_html(rotations, history)
+
 history.extend(rotations)
-with open(HISTORY, "wb") as f:
-    pickle.dump(history[len(leaders) * -1 :], f)
+with open(HISTORY, "wb") as html:
+    pickle.dump(history[len(leaders) * -1 :], html)
