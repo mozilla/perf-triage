@@ -15,6 +15,11 @@ jobs:
         persist-credentials: false
         fetch-depth: 0
 
+    - uses: actions/checkout@v2
+      with:
+        ref: state
+        path: state
+
     - name: Generate rotation report
       uses: actions/setup-python@v2
       with:
@@ -28,7 +33,7 @@ jobs:
         git add -A
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git commit -m 'deploy'
+        git commit -m 'publish'
 
     - name: Force push report to gh-pages
       uses: ad-m/github-push-action@v0.6.0
@@ -37,3 +42,20 @@ jobs:
         branch: gh-pages
         force: true
         directory: ./report
+
+    - name: Commit state
+      run: |
+        cd state
+        git init
+        git add -A
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -m 'update'
+
+    - name: Force push state
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: state
+        force: true
+        directory: ./state

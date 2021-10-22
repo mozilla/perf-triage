@@ -48,7 +48,7 @@ members = [
 
 DATE = datetime.now(timezone.utc)
 ROTATIONS = 2
-HISTORY = "rotations.pickle"
+HISTORY = Path("state/rotations.pickle")
 
 
 def generate_html(rotations, history):
@@ -73,7 +73,7 @@ def generate_html(rotations, history):
 
 
 try:
-    with open(HISTORY, "rb") as html:
+    with HISTORY.open(mode="rb") as html:
         history = pickle.load(html)
 except FileNotFoundError:
     history = []
