@@ -51,7 +51,7 @@ STATE = Path("rotations.pickle")
 
 
 def generate_html(rotations):
-    path = Path("report")
+    path = Path("docs")
     path.mkdir(exist_ok=True)
     fpath = (path / "index.html").with_suffix(".html")
     with fpath.open(mode="w+") as html:
