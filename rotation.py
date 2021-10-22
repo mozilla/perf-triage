@@ -47,11 +47,10 @@ members = [
 ]
 
 DATE = datetime.now(timezone.utc)
-ROTATIONS = 2
-HISTORY = Path("state/rotations.pickle")
+STATE = Path("state/rotations.pickle")
 
 
-def generate_html(rotations, history):
+def generate_html(rotations):
     path = Path("report")
     path.mkdir(exist_ok=True)
     fpath = (path / "index.html").with_suffix(".html")
@@ -59,62 +58,65 @@ def generate_html(rotations, history):
         html.write("<html><body><h1>Performance Triage</h1>")
         html.write(f"<p>Generated on {DATE}.</p>")
         html.write(f"<h2>This week</h2><ol>")
-        html.write(f"<li><strong>{rotations[0].leader}</strong></li>")
-        for s in rotations[0].sheriffs:
+        html.write(f"<li><strong>{rotations[-2].leader}</strong></li>")
+        for s in rotations[-2].sheriffs:
             html.write(f"<li>{s}</li>")
         html.write(f"</ol><h2>Next week</h2><ol>")
-        html.write(f"<li><strong>{rotations[1].leader}</strong></li>")
-        for s in rotations[1].sheriffs:
+        html.write(f"<li><strong>{rotations[-1].leader}</strong></li>")
+        for s in rotations[-1].sheriffs:
             html.write(f"<li>{s}</li>")
         html.write(f"</ol><h2>History</h2><ul>")
-        for r in reversed(history):
+        for r in reversed(rotations[2:]):
             html.write(f"<li><strong>{r.leader}</strong>, {r.sheriffs}</li>")
         html.write("</ul></body></html>")
 
 
 try:
-    with HISTORY.open(mode="rb") as html:
-        history = pickle.load(html)
+    with STATE.open(mode="rb") as html:
+        rotations = pickle.load(html)
 except FileNotFoundError:
-    history = []
+    rotations = []
 
-rotations = []
-leaders = [m for m in members if m.lead]
-leader_candidates = leaders.copy()
-# remove recent leaders from pool
-for r in history[(len(leaders) - ROTATIONS) * -1 :]:
-    if r.leader in leader_candidates:
-        leader_candidates.remove(r.leader)
 
-leader_candidates = random.sample(leader_candidates, ROTATIONS)
+def generate_rotation():
+    leader_candidates = leaders.copy()
+    # remove recent leaders from pool
+    for r in rotations[(len(leaders) - 1) * -1 :]:
+        if r.leader in leader_candidates:
+            leader_candidates.remove(r.leader)
+    leader = random.choice(leader_candidates)
 
-for index, leader in enumerate(leader_candidates):
     sheriff_candidates = members.copy()
     # remove leader from pool
     sheriff_candidates.remove(leader)
     # remove recent sheriffs from pool
-    for r in rotations + history[-4:]:
+    for r in rotations[-4:]:
         for sheriff in r.sheriffs:
             if sheriff in sheriff_candidates:
                 sheriff_candidates.remove(sheriff)
-    # remove upcoming leaders from pool
-    for sheriff in leader_candidates[index + 1 : index + 5]:
-        if sheriff in sheriff_candidates:
-            sheriff_candidates.remove(sheriff)
     # pick sheriffs for each triage rotation
     sheriffs = random.sample(sheriff_candidates, 2)
-    rotations.append(Rotation(leader, sheriffs))
+    return Rotation(leader, sheriffs)
+
+
+leaders = [m for m in members if m.lead]
+
+while len(rotations) < len(leaders):
+    # create some history to improve selection
+    rotations.append(generate_rotation())
+
+# generate new rotation
+rotations.append(generate_rotation())
 
 print(f"Generated on {DATE}\n")
 
-print(f"This week: {rotations[0]}")
-print(f"Next week: {rotations[1]}")
+print(f"This week: {rotations[-2]}")
+print(f"Next week: {rotations[-1]}")
 
 print("\nPrevious rotations:")
-[print(r) for r in reversed(history)]
+[print(r) for r in reversed(rotations[:-2])]
 
-generate_html(rotations, history)
+generate_html(rotations)
 
-history.extend(rotations)
-with open(HISTORY, "wb") as html:
-    pickle.dump(history[len(leaders) * -1 :], html)
+with STATE.open(mode="wb") as f:
+    pickle.dump(rotations, f)
