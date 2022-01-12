@@ -1,0 +1,5 @@
+venv
+
+# send-reminder
+.google-credentials.json
+.google-token.json
