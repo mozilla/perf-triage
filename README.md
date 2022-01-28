@@ -1,21 +1,24 @@
 # perf-triage
 Tools used for triaging performance bugs.
 
-### send-reminder.py
-Note: this script is a WIP and we're working on integrating it with the other
-scripts.
+## Setup
 
-The first time you run, you'll need to create a virtualenv and install the
-dependencies:
-```sh
-# Create virtualenv
-python3 -m venv venv
+For convenience, you can use poetry to manage dependencies and virtual environments.
 
-# Activate virtualenv
-source venv/bin/activate
+When running for the first time, you will need to [install poetry](https://python-poetry.org/docs/#installation) and then run `poetry install` to create the virtual environment and install dependencies.
 
-# Install dependencies
-pip install -r requirements.txt
-```
+Then, you can simply run `poetry run python` followed by the path to the script you'd like to run. For example, `poetry run python rotation.py`.
 
-See `send-reminder.py` for details on running.
+You can update the dependencies by running `poetry update` and can add dependencies using `poetry add`. See the [poetry documentation](https://python-poetry.org/docs/) for more details.
+
+## rotation.py
+Generate new triage rotation.
+
+Run `poetry run python rotation.py`
+
+## send-reminder.py
+Send triage reminders.
+
+Note: this script is a WIP and we're working on integrating it with the other scripts.
+
+Run `poetry run python send-reminder.py` for details on running.

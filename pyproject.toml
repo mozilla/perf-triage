@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "perf-triage"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+license = "MPL-2.0"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+google-auth-oauthlib = "^0.4.6"
+google-api-python-client = "^2.36.0"
+
+[tool.poetry.dev-dependencies]
+black = "^21.12b0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
