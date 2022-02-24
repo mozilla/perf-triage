@@ -32,7 +32,9 @@ PATH_TOKEN = '.google-token.json'
 
 DESCRIPTION = '''{} as Triage Sheriff #1 this week, can you please take the lead to coordinate a date/time this week?
 
-For the latest bug nominations, please use https://mzl.la/perf-triage-query.'''
+For the latest bug nominations, please use https://mzl.la/perf-triage-query.
+
+Triage rotation: https://mozilla.github.io/perf-triage/'''
 
 
 def parse_args():
