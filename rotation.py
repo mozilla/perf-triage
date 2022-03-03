@@ -1,14 +1,22 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from enum import Enum
 from pathlib import Path
 import pickle
 import random
+
+
+class Geo(Enum):
+    AMERICAS = "🌎"
+    EUROPE_AFRICA = "🌍"
+    ASIA_AUSTRALIA = "🌏"
 
 
 @dataclass
 class Person:
     name: str
     nick: str
+    geo: Geo
     lead: bool = False
 
     def __repr__(self):
@@ -25,25 +33,25 @@ class Rotation:
 
 
 members = [
-    Person("Andrew Creskey", "acreskey", True),
-    Person("Bas Schouten", "bas", True),
-    Person("Benjamin De Kosnik", "bdekoz", True),
-    Person("Daniel Holbert", "dholbert"),
-    Person("Dave Hunt", "davehunt"),
-    Person("Denis Palmeiro", "denispal", True),
-    Person("Doug Thayer", "dthayer", True),
-    Person("Florian Quèze", "florian"),
-    Person("Gerald Squelart", "gerald", True),
-    Person("Gregory Mierzwinski", "sparky", True),
-    Person("Julien Wajsberg", "julienw", True),
-    Person("Marc Leclair", "mleclair"),
-    Person("Markus Stange", "mstange", True),
-    Person("Michael Comella", "mcomella", True),
-    Person("Mike Conley", "mconley"),
-    Person("Nazim Can Altinova", "canova"),
-    Person("Olli Pettay", "smaug"),
-    Person("Randell Jesup", "jesup"),
-    Person("Sean Feng", "sefeng", True),
+    Person("Andrew Creskey", "acreskey", Geo.AMERICAS, True),
+    Person("Bas Schouten", "bas", Geo.EUROPE_AFRICA, True),
+    Person("Benjamin De Kosnik", "bdekoz", Geo.AMERICAS, True),
+    Person("Daniel Holbert", "dholbert", Geo.AMERICAS),
+    Person("Dave Hunt", "davehunt", Geo.EUROPE_AFRICA),
+    Person("Denis Palmeiro", "denispal", Geo.AMERICAS, True),
+    Person("Doug Thayer", "dthayer", Geo.AMERICAS, True),
+    Person("Florian Quèze", "florian", Geo.EUROPE_AFRICA),
+    Person("Gerald Squelart", "gerald", Geo.ASIA_AUSTRALIA, True),
+    Person("Gregory Mierzwinski", "sparky", Geo.AMERICAS, True),
+    Person("Julien Wajsberg", "julienw", Geo.EUROPE_AFRICA, True),
+    Person("Marc Leclair", "mleclair", Geo.AMERICAS),
+    Person("Markus Stange", "mstange", Geo.AMERICAS, True),
+    Person("Michael Comella", "mcomella", Geo.AMERICAS, True),
+    Person("Mike Conley", "mconley", Geo.AMERICAS),
+    Person("Nazim Can Altinova", "canova", Geo.EUROPE_AFRICA),
+    Person("Olli Pettay", "smaug", Geo.EUROPE_AFRICA),
+    Person("Randell Jesup", "jesup", Geo.AMERICAS),
+    Person("Sean Feng", "sefeng", Geo.AMERICAS, True),
 ]
 
 DATE = datetime.now(timezone.utc)
@@ -97,7 +105,15 @@ def generate_rotation():
             if sheriff in sheriff_candidates:
                 sheriff_candidates.remove(sheriff)
     # pick sheriffs for each triage rotation
-    sheriffs = random.sample(sheriff_candidates, 2)
+    sheriffs = []
+    for _ in range(2):
+        geos = {s.geo for s in [leader] + sheriffs}
+        if len(geos) > 1:
+            # remove sheriffs outside of selected geos from pool
+            sheriff_candidates = [c for c in sheriff_candidates if c.geo in geos]
+        if len(sheriff_candidates) > 0:
+            random.shuffle(sheriff_candidates)
+            sheriffs.append(sheriff_candidates.pop())
     return Rotation(leader, sheriffs)
 
 
