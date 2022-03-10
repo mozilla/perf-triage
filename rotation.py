@@ -40,7 +40,7 @@ members = [
     Person("Dave Hunt", "davehunt", Geo.EUROPE_AFRICA),
     Person("Denis Palmeiro", "denispal", Geo.AMERICAS, True),
     Person("Doug Thayer", "dthayer", Geo.AMERICAS, True),
-    Person("Florian Quèze", "florian", Geo.EUROPE_AFRICA),
+    Person("Florian Quèze", "florian", Geo.EUROPE_AFRICA, True),
     Person("Gerald Squelart", "gerald", Geo.ASIA_AUSTRALIA, True),
     Person("Gregory Mierzwinski", "sparky", Geo.AMERICAS, True),
     Person("Julien Wajsberg", "julienw", Geo.EUROPE_AFRICA, True),
