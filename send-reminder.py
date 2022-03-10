@@ -30,9 +30,9 @@ ID_CALENDAR = 'mozilla.com_9bk5f2rqdeuip38jbeld84kpqc@group.calendar.google.com'
 PATH_SECRETS = '.google-credentials.json'
 PATH_TOKEN = '.google-token.json'
 
-DESCRIPTION = '''{} as Triage Sheriff #1 this week, can you please take the lead to coordinate a date/time this week?
+DESCRIPTION = """{} as Triage Sheriff #1, can you please take the lead to coordinate a date/time this week?
 
-For the latest bug nominations, please use https://mzl.la/perf-triage-query.'''
+For the latest guidelines, please see https://wiki.mozilla.org/Performance/Triage."""
 
 
 def parse_args():
