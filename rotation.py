@@ -6,6 +6,10 @@ import pickle
 import random
 
 
+DATE = datetime.now(timezone.utc)
+SAVED_ROTATIONS_PATH = Path("rotations.pickle")
+
+
 class Geo(Enum):
     AMERICAS = "🌎"
     EUROPE_AFRICA = "🌍"
@@ -32,7 +36,7 @@ class Rotation:
         return f"{self.leader}, {self.sheriffs}"
 
 
-members = [
+MEMBERS = [
     Person("Andrew Creskey", "acreskey", Geo.AMERICAS, True),
     Person("Bas Schouten", "bas", Geo.EUROPE_AFRICA, True),
     Person("Benjamin De Kosnik", "bdekoz", Geo.AMERICAS, True),
@@ -56,9 +60,6 @@ members = [
     Person("Andrej Glavic", "andrej", Geo.AMERICAS),
 ]
 
-DATE = datetime.now(timezone.utc)
-STATE = Path("rotations.pickle")
-
 
 def generate_html(rotations):
     path = Path("docs")
@@ -81,14 +82,7 @@ def generate_html(rotations):
         html.write("</ul></body></html>")
 
 
-try:
-    with STATE.open(mode="rb") as html:
-        rotations = pickle.load(html)
-except FileNotFoundError:
-    rotations = []
-
-
-def generate_rotation():
+def generate_rotation(leaders, rotations):
     leader_candidates = leaders.copy()
     # remove recent leaders from pool
     for r in rotations[(len(leaders) - 1) * -1 :]:
@@ -96,7 +90,7 @@ def generate_rotation():
             leader_candidates.remove(r.leader)
     leader = random.choice(leader_candidates)
 
-    sheriff_candidates = members.copy()
+    sheriff_candidates = MEMBERS.copy()
     # remove leader from pool
     sheriff_candidates.remove(leader)
     # remove recent sheriffs from pool
@@ -119,24 +113,35 @@ def generate_rotation():
     return Rotation(leader, sheriffs)
 
 
-leaders = [m for m in members if m.lead]
+def main():
+    try:
+        with SAVED_ROTATIONS_PATH.open(mode="rb") as html:
+            rotations = pickle.load(html)
+    except FileNotFoundError:
+        rotations = []
 
-while len(rotations) < len(leaders):
-    # create some history to improve selection
-    rotations.append(generate_rotation())
+    leaders = [m for m in MEMBERS if m.lead]
 
-# generate new rotation
-rotations.append(generate_rotation())
+    while len(rotations) < len(leaders):
+        # create some history to improve selection
+        rotations.append(generate_rotation(leaders, rotations))
 
-print(f"Generated on {DATE}\n")
+    # generate new rotation
+    rotations.append(generate_rotation(leaders, rotations))
 
-print(f"This week: {rotations[-2]}")
-print(f"Next week: {rotations[-1]}")
+    print(f"Generated on {DATE}\n")
 
-print("\nPrevious rotations:")
-[print(r) for r in reversed(rotations[:-2])]
+    print(f"This week: {rotations[-2]}")
+    print(f"Next week: {rotations[-1]}")
 
-generate_html(rotations)
+    print("\nPrevious rotations:")
+    [print(r) for r in reversed(rotations[:-2])]
 
-with STATE.open(mode="wb") as f:
-    pickle.dump(rotations, f)
+    generate_html(rotations)
+
+    with SAVED_ROTATIONS_PATH.open(mode="wb") as f:
+        pickle.dump(rotations, f)
+
+
+if __name__ == '__main__':
+    main()
