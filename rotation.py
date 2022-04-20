@@ -22,9 +22,14 @@ class Person:
     nick: str
     geo: Geo
     lead: bool = False
+    """<cal_override> at mozilla is used to send the calendar invitations"""
+    cal_override: str = None
 
     def __repr__(self):
         return f"{self.name} [{self.nick}]"
+
+    def get_cal_nick(self):
+        return self.cal_override if self.cal_override else self.nick
 
 
 @dataclass
@@ -38,26 +43,26 @@ class Rotation:
 
 MEMBERS = [
     Person("Andrew Creskey", "acreskey", Geo.AMERICAS, True),
-    Person("Bas Schouten", "bas", Geo.EUROPE_AFRICA, True),
+    Person("Bas Schouten", "bas", Geo.EUROPE_AFRICA, True, cal_override="bschouten"),
     Person("Benjamin De Kosnik", "bdekoz", Geo.AMERICAS, True),
     Person("Daniel Holbert", "dholbert", Geo.AMERICAS),
     Person("Dave Hunt", "davehunt", Geo.EUROPE_AFRICA),
-    Person("Denis Palmeiro", "denispal", Geo.AMERICAS, True),
-    Person("Doug Thayer", "dthayer", Geo.AMERICAS, True),
+    Person("Denis Palmeiro", "denispal", Geo.AMERICAS, True, cal_override="dpalmeiro"),
+    Person("Doug Thayer", "dthayer", Geo.AMERICAS, True, cal_override="dothayer"),
     Person("Florian Quèze", "florian", Geo.EUROPE_AFRICA, True),
     Person("Gerald Squelart", "gerald", Geo.ASIA_AUSTRALIA, True),
-    Person("Gregory Mierzwinski", "sparky", Geo.AMERICAS, True),
+    Person("Gregory Mierzwinski", "sparky", Geo.AMERICAS, True, cal_override="gmierzwinski"),
     Person("Julien Wajsberg", "julienw", Geo.EUROPE_AFRICA, True),
     Person("Marc Leclair", "mleclair", Geo.AMERICAS),
     Person("Markus Stange", "mstange", Geo.AMERICAS, True),
     Person("Michael Comella", "mcomella", Geo.AMERICAS, True),
     Person("Mike Conley", "mconley", Geo.AMERICAS),
-    Person("Nazim Can Altinova", "canova", Geo.EUROPE_AFRICA),
+    Person("Nazim Can Altinova", "canova", Geo.EUROPE_AFRICA, cal_override="naltinova"),
     Person("Olli Pettay", "smaug", Geo.EUROPE_AFRICA),
-    Person("Randell Jesup", "jesup", Geo.AMERICAS),
+    Person("Randell Jesup", "jesup", Geo.AMERICAS, cal_override="rjesup"),
     Person("Sean Feng", "sefeng", Geo.AMERICAS, True),
-    Person("Frank Doty", "frankdoty", Geo.AMERICAS),
-    Person("Andrej Glavic", "andrej", Geo.AMERICAS),
+    Person("Frank Doty", "frankdoty", Geo.AMERICAS, cal_override="fdoty"),
+    Person("Andrej Glavic", "andrej", Geo.AMERICAS, cal_override="aglavic"),
 ]
 
 
