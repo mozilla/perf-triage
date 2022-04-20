@@ -1,3 +1,4 @@
+import argparse
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
@@ -66,6 +67,16 @@ MEMBERS = [
 ]
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--production', action='store_true',
+        help=('if set, performs all actions as if running in CI including '
+              'adding calendar invites. This is not enabled by default to ease '
+              'development, i.e. so we\'re not adding calendar invites every time'))
+    return parser.parse_args()
+
+
 def generate_html(rotations):
     path = Path("docs")
     path.mkdir(exist_ok=True)
@@ -119,6 +130,8 @@ def generate_rotation(leaders, rotations):
 
 
 def main():
+    args = parse_args()
+
     try:
         with SAVED_ROTATIONS_PATH.open(mode="rb") as html:
             rotations = pickle.load(html)
