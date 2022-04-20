@@ -14,7 +14,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
-    - run: python rotation.py --production
+        cache: 'pip'
+    - run: |
+        pip install -r requirements.txt
+        python rotation.py --production
 
     - name: Push results
       run: |
