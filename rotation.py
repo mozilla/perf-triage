@@ -1,10 +1,13 @@
 import argparse
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from enum import Enum
+from googleapiclient.errors import HttpError
 from pathlib import Path
+import gcal
 import pickle
 import random
+import sys
 
 
 DATE = datetime.now(timezone.utc)
@@ -129,6 +132,41 @@ def generate_rotation(leaders, rotations):
     return Rotation(leader, sheriffs)
 
 
+def add_gcal_reminder(is_production, rotation):
+    """Adds a triage reminder event to the Performance Team Google Calendar based on the rotation.
+    See the top-of-file comment in gcal.py for requirements to run this function.
+
+    This function may raise HttpError for google API or network failures and
+    FileNotFoundError if the GCloud Project secrets are missing.
+    """
+    if is_production:
+        credentials = gcal.auth_as_user()
+        service = gcal.get_calendar_service(credentials)
+
+    # N.B.: for simplicity, this code assumes this script executes on Monday
+    # or Tuesday the week before we want to set the reminder.
+    #
+    # Our reminders appear one week in advance. Note that we don't use the time fields.
+    reminder_date = DATE + timedelta(weeks=1)
+    # Show the reminder on Tuesday: we want the reminder to appear as early in
+    # the week as possible but add a buffer day in case Monday is a holiday.
+    while reminder_date.weekday() != 1:  # 1 == Tuesday
+        reminder_date += timedelta(days=1)
+    # To save time in changing the original implementation,
+    # send_triage_reminder takes a yyyy-mm-dd instead of a datetime.
+    reminder_date = reminder_date.strftime('%Y-%m-%d')
+
+    attendees = [rotation.leader] + [s for s in rotation.sheriffs]
+    addresses = [a.get_cal_nick() + '@mozilla.com' for a in attendees]
+
+    if is_production:
+        gcal.send_triage_reminder(service, reminder_date, addresses)
+    else:
+        print(('\nadd_gcal_reminder dry-run mode: would have created calendar '
+               'invite with date {} and addresses {}')
+               .format(reminder_date, addresses))
+
+
 def main():
     args = parse_args()
 
@@ -159,6 +197,16 @@ def main():
 
     with SAVED_ROTATIONS_PATH.open(mode="wb") as f:
         pickle.dump(rotations, f)
+
+    print('')  # Add a newline between rotation output and calendar reminder output.
+    try:
+        add_gcal_reminder(args.production, rotations[-1])  # for next week.
+    except HttpError as err:
+        print('ERROR: during network request when adding google calendar reminder: {}'.format(err), file=sys.stderr)
+    except FileNotFoundError as err:
+        print('ERROR: unable to locate Google Cloud Project secrets when adding google calendar reminder: {}'.format(err), file=sys.stderr)
+    except gcal.CredentialException as err:
+        print(f'ERROR - CredentialException: {err}', file=sys.stderr)
 
 
 if __name__ == '__main__':
