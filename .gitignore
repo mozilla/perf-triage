@@ -1,5 +1,5 @@
 venv
 
-# send-reminder
-.google-credentials.json
-.google-token.json
+# gcal.py
+.google-cloud-project-secrets.json
+.google-user-token.json
