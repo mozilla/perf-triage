@@ -53,6 +53,7 @@ members = [
     Person("Randell Jesup", "jesup", Geo.AMERICAS),
     Person("Sean Feng", "sefeng", Geo.AMERICAS, True),
     Person("Frank Doty", "frankdoty", Geo.AMERICAS),
+    Person("Andrej Glavic", "andrej", Geo.AMERICAS),
 ]
 
 DATE = datetime.now(timezone.utc)
