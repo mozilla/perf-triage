@@ -96,8 +96,15 @@ def load_rotations():
     try:
         with SAVED_ROTATIONS_PATH.open(mode="rb") as html:
             rotations = pickle.load(html)
+        if isinstance(rotations, list):
+            # migrate to dict format with dates
+            rotations_dict = {}
+            for rotation in reversed(rotations):
+                week = get_week(DATE - timedelta(weeks=len(rotations_dict) - 1))
+                rotations_dict.setdefault(week, rotation)
+            return rotations_dict
     except FileNotFoundError:
-        rotations = []
+        rotations = {}
     return rotations
 
 
@@ -105,19 +112,21 @@ def generate_html(rotations):
     path = Path("docs")
     path.mkdir(exist_ok=True)
     fpath = (path / "index.html").with_suffix(".html")
+    this_week = rotations[get_week(DATE)]
+    next_week = rotations[get_week(DATE + timedelta(weeks=1))]
     with fpath.open(mode="w+") as html:
         html.write("<html><body><h1>Performance Triage</h1>")
         html.write(f"<p>Generated on {DATE}.</p>")
         html.write(f"<h2>This week</h2><ol>")
-        html.write(f"<li><strong>{rotations[-2].leader}</strong></li>")
-        for s in rotations[-2].sheriffs:
+        html.write(f"<li><strong>{this_week.leader}</strong></li>")
+        for s in this_week.sheriffs:
             html.write(f"<li>{s}</li>")
         html.write(f"</ol><h2>Next week</h2><ol>")
-        html.write(f"<li><strong>{rotations[-1].leader}</strong></li>")
-        for s in rotations[-1].sheriffs:
+        html.write(f"<li><strong>{next_week.leader}</strong></li>")
+        for s in next_week.sheriffs:
             html.write(f"<li>{s}</li>")
         html.write(f"</ol><h2>History</h2><ul>")
-        for r in reversed(rotations[:-2]):
+        for r in list(rotations.values())[2:]:
             html.write(f"<li><strong>{r.leader}</strong>, {r.sheriffs}</li>")
         html.write("</ul></body></html>")
 
@@ -125,7 +134,7 @@ def generate_html(rotations):
 def generate_rotation(leaders, rotations):
     leader_candidates = leaders.copy()
     # remove recent leaders from pool
-    for r in rotations[(len(leaders) - 1) * -1 :]:
+    for r in list(rotations.values())[(len(leaders) - 1) * -1 :]:
         if r.leader in leader_candidates:
             leader_candidates.remove(r.leader)
     leader = random.choice(leader_candidates)
@@ -134,7 +143,7 @@ def generate_rotation(leaders, rotations):
     # remove leader from pool
     sheriff_candidates.remove(leader)
     # remove recent sheriffs from pool
-    for r in rotations[-4:]:
+    for r in list(rotations.values())[-4:]:
         if r.leader in sheriff_candidates:
             sheriff_candidates.remove(r.leader)
         for sheriff in r.sheriffs:
@@ -238,6 +247,11 @@ def log_debug_actions():
     print_state(os.environ.get("PERF_TRIAGE_BOT_CACHED_USER_SECRETS"))
 
 
+def get_week(date):
+    week = datetime.fromisocalendar(*date.isocalendar()[:2], day=1)
+    return week.strftime("%Y-%m-%d")
+
+
 def main():
     args = parse_args()
 
@@ -245,18 +259,24 @@ def main():
     leaders = [m for m in MEMBERS if m.lead]
     while len(rotations) < len(leaders):
         # create some history to improve selection
-        rotations.append(generate_rotation(leaders, rotations))
+        week = get_week(DATE - timedelta(weeks=(len(leaders) - len(rotations))))
+        rotations.setdefault(week, generate_rotation(leaders, rotations))
 
-    # generate new rotation
-    rotations.append(generate_rotation(leaders, rotations))
+    print(f"Generated on {DATE}")
 
-    print(f"Generated on {DATE}\n")
+    print("\nThis week:")
+    this_week = get_week(DATE)
+    rotations.setdefault(this_week, generate_rotation(leaders, rotations))
+    print(f"{this_week}: {rotations[this_week]}")
 
-    print(f"This week: {rotations[-2]}")
-    print(f"Next week: {rotations[-1]}")
+    print("\nNext week:")
+    next_week = get_week(DATE + timedelta(weeks=1))
+    rotations.setdefault(next_week, generate_rotation(leaders, rotations))
+    print(f"{next_week}: {rotations[next_week]}")
 
-    print("\nPrevious rotations:")
-    [print(r) for r in reversed(rotations[:-2])]
+    print("\nHistory:")
+    for week, rotation in list(rotations.items())[2:]:
+        print(f"{week}: {rotation}")
 
     generate_html(rotations)
 
@@ -266,7 +286,9 @@ def main():
     print("")  # Add a newline between rotation output and calendar reminder output.
     log_debug_actions()
     try:
-        add_gcal_reminder(args.production, rotations[-1])  # for next week.
+        add_gcal_reminder(
+            args.production, list(rotations.values())[-1]
+        )  # for next week.
     except HttpError as err:
         print(
             "ERROR: during network request when adding google calendar reminder: {}".format(
