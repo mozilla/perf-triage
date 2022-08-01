@@ -22,10 +22,12 @@ You always need to run `rotation.py` from the activated virtualenv so if you sta
 If you need to make changes to the Google Calendar (e.g. for testing), you may need to pass the `--production` flag to `rotation.py`: without it, the code will not access the Google Calendar API.
 
 ### Sending a triage reminder manually (for errors)
-If `rotation.py` fails to send a triage reminder, you may need to send a reminder manually. Since this is intended as a back-up only, it's not graceful. You will need to start a python interpreter and call the functions manually, e.g.:
-```python
-import gcal
-creds = gcal.auth_as_user()
-service = gcal.get_calendar_service(creds)
-gcal.send_triage_reminder(service, ...)
+If `rotation.py` fails to send a triage reminder, you may need to send a reminder manually. Assuming you have downloaded the credentials to our Google Cloud project and installed the dependencies:
+```sh
+git fetch upstream && git checkout upstream/main # Get the latest cached rotation.
+source venv/bin/activate
+python3
+>>> from rotation import *; add_gcal_reminder_manually('2022-08-09')
 ```
+
+You will be prompted to select the rotation to send a reminder for.

@@ -83,6 +83,15 @@ def parse_args():
     return parser.parse_args()
 
 
+def load_rotations():
+    try:
+        with SAVED_ROTATIONS_PATH.open(mode="rb") as html:
+            rotations = pickle.load(html)
+    except FileNotFoundError:
+        rotations = []
+    return rotations
+
+
 def generate_html(rotations):
     path = Path("docs")
     path.mkdir(exist_ok=True)
@@ -135,6 +144,11 @@ def generate_rotation(leaders, rotations):
     return Rotation(leader, sheriffs)
 
 
+def get_addresses_from_rotation(rotation):
+    attendees = [rotation.leader] + [s for s in rotation.sheriffs]
+    return [a.get_cal_nick() + '@mozilla.com' for a in attendees]
+
+
 def add_gcal_reminder(is_production, rotation):
     """Adds a triage reminder event to the Performance Team Google Calendar based on the rotation.
     See the top-of-file comment in gcal.py for requirements to run this function.
@@ -159,8 +173,7 @@ def add_gcal_reminder(is_production, rotation):
     # send_triage_reminder takes a yyyy-mm-dd instead of a datetime.
     reminder_date = reminder_date.strftime('%Y-%m-%d')
 
-    attendees = [rotation.leader] + [s for s in rotation.sheriffs]
-    addresses = [a.get_cal_nick() + '@mozilla.com' for a in attendees]
+    addresses = get_addresses_from_rotation(rotation)
 
     if is_production:
         gcal.send_triage_reminder(service, reminder_date, addresses)
@@ -170,17 +183,35 @@ def add_gcal_reminder(is_production, rotation):
                .format(reminder_date, addresses))
 
 
+def add_gcal_reminder_manually(date):
+    datetime.strptime(date, '%Y-%m-%d')  # Throws if date format is unexpected.
+
+    rotations = load_rotations()
+    this_week = rotations[-2]
+    next_week = rotations[-1]
+
+    print(f'\nWhich rotation would you like to schedule for {date}?')
+    print('\n(1) This week:')
+    print(this_week)
+    print('\n(2) Next week:')
+    print(str(next_week) + '\n')
+
+    selected_rotation = None
+    while selected_rotation not in ['1', '2']:
+        print('Select rotation (1/2):')
+        selected_rotation = input().strip()
+    addresses = get_addresses_from_rotation(this_week if selected_rotation == '1' else next_week)
+
+    credentials = gcal.auth_as_user()
+    service = gcal.get_calendar_service(credentials)
+    gcal.send_triage_reminder(service, date, addresses)
+
+
 def main():
     args = parse_args()
 
-    try:
-        with SAVED_ROTATIONS_PATH.open(mode="rb") as html:
-            rotations = pickle.load(html)
-    except FileNotFoundError:
-        rotations = []
-
+    rotations = load_rotations()
     leaders = [m for m in MEMBERS if m.lead]
-
     while len(rotations) < len(leaders):
         # create some history to improve selection
         rotations.append(generate_rotation(leaders, rotations))
