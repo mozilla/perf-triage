@@ -56,7 +56,9 @@ MEMBERS = [
     Person("Doug Thayer", "dthayer", Geo.AMERICAS, True, cal_override="dothayer"),
     Person("Florian Quèze", "florian", Geo.EUROPE_AFRICA, True),
     Person("Gerald Squelart", "gerald", Geo.ASIA_AUSTRALIA, True),
-    Person("Gregory Mierzwinski", "sparky", Geo.AMERICAS, True, cal_override="gmierzwinski"),
+    Person(
+        "Gregory Mierzwinski", "sparky", Geo.AMERICAS, True, cal_override="gmierzwinski"
+    ),
     Person("Julien Wajsberg", "julienw", Geo.EUROPE_AFRICA, True),
     Person("Marc Leclair", "mleclair", Geo.AMERICAS),
     Person("Markus Stange", "mstange", Geo.AMERICAS, True),
@@ -68,7 +70,9 @@ MEMBERS = [
     Person("Sean Feng", "sefeng", Geo.AMERICAS, True),
     Person("Frank Doty", "frankdoty", Geo.AMERICAS, cal_override="fdoty"),
     Person("Andrej Glavic", "andrej", Geo.AMERICAS, cal_override="aglavic"),
-    Person("Kimberly Sereduck", "kimberlythegeek", Geo.AMERICAS, cal_override="ksereduck"),
+    Person(
+        "Kimberly Sereduck", "kimberlythegeek", Geo.AMERICAS, cal_override="ksereduck"
+    ),
     Person("Kash Shampur", "kshampur", Geo.AMERICAS),
     Person("Esther", "eng_esther", Geo.AMERICAS, cal_override="eitimielo"),
 ]
@@ -77,10 +81,14 @@ MEMBERS = [
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--production', action='store_true',
-        help=('if set, performs all actions as if running in CI including '
-              'adding calendar invites. This is not enabled by default to ease '
-              'development, i.e. so we\'re not adding calendar invites every time'))
+        "--production",
+        action="store_true",
+        help=(
+            "if set, performs all actions as if running in CI including "
+            "adding calendar invites. This is not enabled by default to ease "
+            "development, i.e. so we're not adding calendar invites every time"
+        ),
+    )
     return parser.parse_args()
 
 
@@ -147,7 +155,7 @@ def generate_rotation(leaders, rotations):
 
 def get_addresses_from_rotation(rotation):
     attendees = [rotation.leader] + [s for s in rotation.sheriffs]
-    return [a.get_cal_nick() + '@mozilla.com' for a in attendees]
+    return [a.get_cal_nick() + "@mozilla.com" for a in attendees]
 
 
 def add_gcal_reminder(is_production, rotation):
@@ -172,36 +180,41 @@ def add_gcal_reminder(is_production, rotation):
         reminder_date += timedelta(days=1)
     # To save time in changing the original implementation,
     # send_triage_reminder takes a yyyy-mm-dd instead of a datetime.
-    reminder_date = reminder_date.strftime('%Y-%m-%d')
+    reminder_date = reminder_date.strftime("%Y-%m-%d")
 
     addresses = get_addresses_from_rotation(rotation)
 
     if is_production:
         gcal.send_triage_reminder(service, reminder_date, addresses)
     else:
-        print(('\nadd_gcal_reminder dry-run mode: would have created calendar '
-               'invite with date {} and addresses {}')
-               .format(reminder_date, addresses))
+        print(
+            (
+                "\nadd_gcal_reminder dry-run mode: would have created calendar "
+                "invite with date {} and addresses {}"
+            ).format(reminder_date, addresses)
+        )
 
 
 def add_gcal_reminder_manually(date):
-    datetime.strptime(date, '%Y-%m-%d')  # Throws if date format is unexpected.
+    datetime.strptime(date, "%Y-%m-%d")  # Throws if date format is unexpected.
 
     rotations = load_rotations()
     this_week = rotations[-2]
     next_week = rotations[-1]
 
-    print(f'\nWhich rotation would you like to schedule for {date}?')
-    print('\n(1) This week:')
+    print(f"\nWhich rotation would you like to schedule for {date}?")
+    print("\n(1) This week:")
     print(this_week)
-    print('\n(2) Next week:')
-    print(str(next_week) + '\n')
+    print("\n(2) Next week:")
+    print(str(next_week) + "\n")
 
     selected_rotation = None
-    while selected_rotation not in ['1', '2']:
-        print('Select rotation (1/2):')
+    while selected_rotation not in ["1", "2"]:
+        print("Select rotation (1/2):")
         selected_rotation = input().strip()
-    addresses = get_addresses_from_rotation(this_week if selected_rotation == '1' else next_week)
+    addresses = get_addresses_from_rotation(
+        this_week if selected_rotation == "1" else next_week
+    )
 
     credentials = gcal.auth_as_user()
     service = gcal.get_calendar_service(credentials)
@@ -209,17 +222,20 @@ def add_gcal_reminder_manually(date):
 
 
 def log_debug_actions():
-    '''temporary logging to figure out why GitHub actions isn\'t sending automated
-    reminders because it doesn't seem possible to test locally'''
-    def print_state(val):
-        if val: print('PRESENT')
-        else: print('UNAVAILABLE')
+    """temporary logging to figure out why GitHub actions isn\'t sending automated
+    reminders because it doesn't seem possible to test locally"""
 
-    print('DEBUG: environment variables present?')
-    print('IN_AUTOMATION... ', end='')
-    print_state(os.environ.get('IN_AUTOMATION'))
-    print('PERF_TRIAGE_BOT_CACHED_USER_SECRETS... ', end='')
-    print_state(os.environ.get('PERF_TRIAGE_BOT_CACHED_USER_SECRETS'))
+    def print_state(val):
+        if val:
+            print("PRESENT")
+        else:
+            print("UNAVAILABLE")
+
+    print("DEBUG: environment variables present?")
+    print("IN_AUTOMATION... ", end="")
+    print_state(os.environ.get("IN_AUTOMATION"))
+    print("PERF_TRIAGE_BOT_CACHED_USER_SECRETS... ", end="")
+    print_state(os.environ.get("PERF_TRIAGE_BOT_CACHED_USER_SECRETS"))
 
 
 def main():
@@ -247,17 +263,27 @@ def main():
     with SAVED_ROTATIONS_PATH.open(mode="wb") as f:
         pickle.dump(rotations, f)
 
-    print('')  # Add a newline between rotation output and calendar reminder output.
+    print("")  # Add a newline between rotation output and calendar reminder output.
     log_debug_actions()
     try:
         add_gcal_reminder(args.production, rotations[-1])  # for next week.
     except HttpError as err:
-        print('ERROR: during network request when adding google calendar reminder: {}'.format(err), file=sys.stderr)
+        print(
+            "ERROR: during network request when adding google calendar reminder: {}".format(
+                err
+            ),
+            file=sys.stderr,
+        )
     except FileNotFoundError as err:
-        print('ERROR: unable to locate Google Cloud Project secrets when adding google calendar reminder: {}'.format(err), file=sys.stderr)
+        print(
+            "ERROR: unable to locate Google Cloud Project secrets when adding google calendar reminder: {}".format(
+                err
+            ),
+            file=sys.stderr,
+        )
     except gcal.CredentialException as err:
-        print(f'ERROR - CredentialException: {err}', file=sys.stderr)
+        print(f"ERROR - CredentialException: {err}", file=sys.stderr)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
