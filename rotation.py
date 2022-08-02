@@ -126,7 +126,7 @@ def generate_html(rotations):
         for s in next_week.sheriffs:
             html.write(f"<li>{s}</li>")
         html.write(f"</ol><h2>History</h2><ul>")
-        for r in list(rotations.values())[2:]:
+        for _, r in list(sorted(rotations.items(), reverse=True))[2:]:
             html.write(f"<li><strong>{r.leader}</strong>, {r.sheriffs}</li>")
         html.write("</ul></body></html>")
 
@@ -134,7 +134,7 @@ def generate_html(rotations):
 def generate_rotation(leaders, rotations):
     leader_candidates = leaders.copy()
     # remove recent leaders from pool
-    for r in list(rotations.values())[(len(leaders) - 1) * -1 :]:
+    for _, r in list(sorted(rotations.items()))[(len(leaders) - 1) * -1 :]:
         if r.leader in leader_candidates:
             leader_candidates.remove(r.leader)
     leader = random.choice(leader_candidates)
@@ -143,7 +143,7 @@ def generate_rotation(leaders, rotations):
     # remove leader from pool
     sheriff_candidates.remove(leader)
     # remove recent sheriffs from pool
-    for r in list(rotations.values())[-4:]:
+    for w, r in list(sorted(rotations.items()))[-4:]:
         if r.leader in sheriff_candidates:
             sheriff_candidates.remove(r.leader)
         for sheriff in r.sheriffs:
@@ -208,8 +208,8 @@ def add_gcal_reminder_manually(date):
     datetime.strptime(date, "%Y-%m-%d")  # Throws if date format is unexpected.
 
     rotations = load_rotations()
-    this_week = rotations[-2]
-    next_week = rotations[-1]
+    this_week = rotations[get_week(DATE)]
+    next_week = rotations[get_week(DATE + timedelta(weeks=1))]
 
     print(f"\nWhich rotation would you like to schedule for {date}?")
     print("\n(1) This week:")
@@ -266,16 +266,18 @@ def main():
 
     print("\nThis week:")
     this_week = get_week(DATE)
-    rotations.setdefault(this_week, generate_rotation(leaders, rotations))
+    if not rotations.get(this_week):
+        rotations[this_week] = generate_rotation(leaders, rotations)
     print(f"{this_week}: {rotations[this_week]}")
 
     print("\nNext week:")
     next_week = get_week(DATE + timedelta(weeks=1))
-    rotations.setdefault(next_week, generate_rotation(leaders, rotations))
+    if not rotations.get(next_week):
+        rotations[next_week] = generate_rotation(leaders, rotations)
     print(f"{next_week}: {rotations[next_week]}")
 
     print("\nHistory:")
-    for week, rotation in list(rotations.items())[2:]:
+    for week, rotation in list(sorted(rotations.items(), reverse=True))[2:]:
         print(f"{week}: {rotation}")
 
     generate_html(rotations)
@@ -286,9 +288,7 @@ def main():
     print("")  # Add a newline between rotation output and calendar reminder output.
     log_debug_actions()
     try:
-        add_gcal_reminder(
-            args.production, list(rotations.values())[-1]
-        )  # for next week.
+        add_gcal_reminder(args.production, rotations[next_week])  # for next week.
     except HttpError as err:
         print(
             "ERROR: during network request when adding google calendar reminder: {}".format(
