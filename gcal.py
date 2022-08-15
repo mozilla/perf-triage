@@ -82,7 +82,7 @@ PATH_GCLOUD_PROJECT_SECRETS = ".google-cloud-project-secrets.json"
 PATH_CACHED_USER_SECRETS = ".google-user-token.json"
 ENV_CACHED_USER_SECRETS = 'PERF_TRIAGE_BOT_CACHED_USER_SECRETS'
 
-IN_AUTOMATION = True if os.environ.get('IN_AUTOMATION') else False
+IN_AUTOMATION = True if os.environ.get('CI') else False  # CI is always true on GitHub Actions.
 
 DESCRIPTION = """{lead_sheriff} as Triage Sheriff #1, can you please take the lead to coordinate a date/time this week?
 

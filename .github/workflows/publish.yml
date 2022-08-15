@@ -21,7 +21,6 @@ jobs:
 
     - name: Generate report
       env:
-        IN_AUTOMATION: ${{ secrets.IN_AUTOMATION }}
         PERF_TRIAGE_BOT_CACHED_USER_SECRETS: ${{ secrets.PERF_TRIAGE_BOT_CACHED_USER_SECRETS }}
       run: |
         python rotation.py --production
