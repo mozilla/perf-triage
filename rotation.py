@@ -272,16 +272,12 @@ def main():
         add_gcal_reminder(args.production, rotations[next_week])  # for next week.
     except HttpError as err:
         print(
-            "ERROR: during network request when adding google calendar reminder: {}".format(
-                err
-            ),
+            f"ERROR: during network request when adding google calendar reminder: {err}",
             file=sys.stderr,
         )
     except FileNotFoundError as err:
         print(
-            "ERROR: unable to locate Google Cloud Project secrets when adding google calendar reminder: {}".format(
-                err
-            ),
+            f"ERROR: unable to locate Google Cloud Project secrets when adding google calendar reminder: {err}",
             file=sys.stderr,
         )
     except gcal.CredentialException as err:
