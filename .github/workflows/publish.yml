@@ -10,17 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
-    - name: Generate report
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
         cache: 'pip'
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Generate report
       env:
         IN_AUTOMATION: ${{ secrets.IN_AUTOMATION }}
         PERF_TRIAGE_BOT_CACHED_USER_SECRETS: ${{ secrets.PERF_TRIAGE_BOT_CACHED_USER_SECRETS }}
-    - run: |
-        pip install -r requirements.txt
+      run: |
         python rotation.py --production
 
     - name: Push results

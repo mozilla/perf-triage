@@ -5,7 +5,6 @@ from enum import Enum
 from googleapiclient.errors import HttpError
 from pathlib import Path
 import gcal
-import os
 import pickle
 import random
 import sys
@@ -230,23 +229,6 @@ def add_gcal_reminder_manually(date):
     gcal.send_triage_reminder(service, date, addresses)
 
 
-def log_debug_actions():
-    """temporary logging to figure out why GitHub actions isn\'t sending automated
-    reminders because it doesn't seem possible to test locally"""
-
-    def print_state(val):
-        if val:
-            print("PRESENT")
-        else:
-            print("UNAVAILABLE")
-
-    print("DEBUG: environment variables present?")
-    print("IN_AUTOMATION... ", end="")
-    print_state(os.environ.get("IN_AUTOMATION"))
-    print("PERF_TRIAGE_BOT_CACHED_USER_SECRETS... ", end="")
-    print_state(os.environ.get("PERF_TRIAGE_BOT_CACHED_USER_SECRETS"))
-
-
 def get_week(date):
     week = datetime.fromisocalendar(*date.isocalendar()[:2], day=1)
     return week.strftime("%Y-%m-%d")
@@ -286,7 +268,6 @@ def main():
         pickle.dump(rotations, f)
 
     print("")  # Add a newline between rotation output and calendar reminder output.
-    log_debug_actions()
     try:
         add_gcal_reminder(args.production, rotations[next_week])  # for next week.
     except HttpError as err:
