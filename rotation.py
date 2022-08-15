@@ -166,14 +166,32 @@ def get_addresses_from_rotation(rotation):
     return [a.get_cal_nick() + "@mozilla.com" for a in attendees]
 
 
-def add_gcal_reminder(is_production, rotation):
+def add_gcal_reminder(is_production, rotation, generated_next_week):
     """Adds a triage reminder event to the Performance Team Google Calendar based on the rotation.
     See the top-of-file comment in gcal.py for requirements to run this function.
 
     This function may raise HttpError for google API or network failures and
     FileNotFoundError if the GCloud Project secrets are missing.
     """
-    if is_production:
+    # TODO: the states (is_production, generated_next_week, & CI envvar) seem confusing - is there a cleaner solution?
+    dry_run_mode = False
+    if not generated_next_week:
+        dry_run_mode = True
+        print(
+            (
+                "INFO: for this script to be idempotent, we only add calendar reminders when we "
+                "generate new rotations for next week. We did not generate it this time so we "
+                "run add_gcal_reminder in dry run mode."
+            )
+        )
+
+    if not is_production:
+        dry_run_mode = True
+        print(
+            "INFO: --production was not specified so running add_gcal_reminder in dry run mode."
+        )
+
+    if not dry_run_mode:
         credentials = gcal.auth_as_user()
         service = gcal.get_calendar_service(credentials)
 
@@ -192,7 +210,7 @@ def add_gcal_reminder(is_production, rotation):
 
     addresses = get_addresses_from_rotation(rotation)
 
-    if is_production:
+    if not dry_run_mode:
         gcal.send_triage_reminder(service, reminder_date, addresses)
     else:
         print(
@@ -254,7 +272,9 @@ def main():
 
     print("\nNext week:")
     next_week = get_week(DATE + timedelta(weeks=1))
+    generated_next_week = False
     if not rotations.get(next_week):
+        generated_next_week = True
         rotations[next_week] = generate_rotation(leaders, rotations)
     print(f"{next_week}: {rotations[next_week]}")
 
@@ -269,7 +289,7 @@ def main():
 
     print("")  # Add a newline between rotation output and calendar reminder output.
     try:
-        add_gcal_reminder(args.production, rotations[next_week])  # for next week.
+        add_gcal_reminder(args.production, rotations[next_week], generated_next_week)
     except HttpError as err:
         print(
             f"ERROR: during network request when adding google calendar reminder: {err}",
