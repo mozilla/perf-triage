@@ -21,6 +21,9 @@ You always need to run `rotation.py` from the activated virtualenv so if you sta
 
 If you need to make changes to the Google Calendar (e.g. for testing), you may need to pass the `--production` flag to `rotation.py`: without it, the code will not access the Google Calendar API.
 
+### Developing GitHub Actions
+We've found the fastest way to iterate on GitHub Actions is to fork the repository, make changes to the `main` branch of your fork, and check the output there.
+
 ### Sending a triage reminder manually (for errors)
 If `rotation.py` fails to send a triage reminder, you may need to send a reminder manually. Assuming you have downloaded the credentials to our Google Cloud project and installed the dependencies:
 ```sh
