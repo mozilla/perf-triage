@@ -6,6 +6,7 @@ from googleapiclient.errors import HttpError
 from pathlib import Path
 import gcal
 import pickle
+import os
 import random
 import sys
 
@@ -213,10 +214,13 @@ def add_gcal_reminder(is_production, rotation, generated_next_week):
     if not dry_run_mode:
         gcal.send_triage_reminder(service, reminder_date, addresses)
     else:
+        if os.getenv("CI"):
+            # Don't print full email addresses to CI logs.
+            addresses = [a.split("@")[0] for a in addresses]
         print(
             (
                 "\nadd_gcal_reminder dry-run mode: would have created calendar "
-                "invite with date {} and addresses {}"
+                "invite with date {} and invitees {}"
             ).format(reminder_date, addresses)
         )
 
