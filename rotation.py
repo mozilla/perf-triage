@@ -5,10 +5,10 @@ from enum import Enum
 from googleapiclient.errors import HttpError
 from pathlib import Path
 import gcal
+import logging
 import pickle
 import os
 import random
-import sys
 
 
 DATE = datetime.now(timezone.utc)
@@ -294,18 +294,18 @@ def main():
     print("")  # Add a newline between rotation output and calendar reminder output.
     try:
         add_gcal_reminder(args.production, rotations[next_week], generated_next_week)
-    except HttpError as err:
-        print(
-            f"ERROR: during network request when adding google calendar reminder: {err}",
-            file=sys.stderr,
-        )
-    except FileNotFoundError as err:
-        print(
-            f"ERROR: unable to locate Google Cloud Project secrets when adding google calendar reminder: {err}",
-            file=sys.stderr,
-        )
-    except gcal.CredentialException as err:
-        print(f"ERROR - CredentialException: {err}", file=sys.stderr)
+    except Exception as err:
+        # If this script fails (returns a non-zero exit code), the triage rotation website will not
+        # get updated. Since contacting the network to send a reminder can hit a lot of errors, we
+        # catch all exceptions to be safe and avoid this possibility.
+        # TODO: separate this into a separate build task to make generate rotation even safer.
+        if type(err) is HttpError:
+            logging.exception("during network request when adding google calendar reminder")
+        elif type(err) is FileNotFoundError:
+            logging.exception("unable to locate Google Cloud Project secrets when adding google calendar reminder")
+        else:
+            # Exception types include gcal.CredentialException & GoogleAuthError
+            logging.exception('cause unknown')
 
 
 if __name__ == "__main__":
