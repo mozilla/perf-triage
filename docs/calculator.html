@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Performance Triage: Impact Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+    <div class="container">
+        <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+                <svg class="bi me-2" width="40" height="32">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+                <span class="fs-4">Performance Triage: Impact Calculator</span>
+            </a>
+
+            <ul class="nav nav-pills">
+                <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">Impact Calculator</a></li>
+                <li class="nav-item"><a href="../index.html" class="nav-link">Rotation</a></li>
+            </ul>
+        </header>
+    </div>
+
+    <form>
+        <div class="container">
+
+            <div class="alert alert-primary" role="alert">
+                Changes to this calculator can be suggested in the <a
+                    href="https://chat.mozilla.org/#/room/#perf-triage:mozilla.org" class="alert-link">#perf-triage
+                    Matrix
+                    channel</a>.
+            </div>
+
+            <div class="row">
+                <div id="formRows" class="col-md-7">
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <h6>Platforms:</h6>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-check form-check-inline">
+                                <input id="platform-windows" class="form-check-input" type="checkbox"
+                                    data-group="affects-os" data-multiplier="3" data-group-max-multiplier="4">
+                                <label class="form-check-label" for="platform-windows">Windows</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input id="platform-macos" class="form-check-input" type="checkbox"
+                                    data-group="affects-os" data-multiplier="3" data-group-max-multiplier="4">
+                                <label class="form-check-label" for="platform-macos">macOS</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input id="platform-linux" class="form-check-input" type="checkbox"
+                                    data-group="affects-os" data-multiplier="1" data-group-max-multiplier="4">
+                                <label class="form-check-label" for="platform-linux">Linux</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input id="platform-android" class="form-check-input" type="checkbox"
+                                    data-group="affects-os" data-multiplier="1.5" data-group-max-multiplier="4">
+                                <label class="form-check-label" for="platform-android">Android</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <h6>Impact on browser:</h6>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="affects-browser" id="browser-minor"
+                                    checked data-basescore="0">
+                                <label class="form-check-label" for="browser-minor">Minor</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="affects-browser" id="browser-startup"
+                                    data-basescore="5" data-keywords="perf:startup">
+                                <label class="form-check-label" for="browser-startup">
+                                    Causes noticeable startup delay</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="affects-browser"
+                                    id="browser-shutdown" data-basescore="2">
+                                <label class="form-check-label" for="browser-shutdown">
+                                    Causes noticeable shutdown delay</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="affects-browser" id="browser-jank"
+                                    data-basescore="5" data-keywords="perf:responsiveness">
+                                <label class="form-check-label" for="browser-jank">Causes noticeable jank</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="affects-browser" id="browser-major"
+                                    data-basescore="10" data-keywords="perf:responsiveness">
+                                <label class="form-check-label" for="browser-major">
+                                    Renders browser effectively unusable</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <h6>Impact on site:</h6>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="affects-site" id="site-minor" checked
+                                    data-basescore="0">
+                                <label class="form-check-label" for="site-minor">Minor</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="affects-site" id="site-noticeable"
+                                    data-basescore="2" data-keywords="perf:responsiveness">
+                                <label class="form-check-label" for="site-noticeable">Causes noticeable jank</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="affects-site" id="site-major"
+                                    data-basescore="3" data-keywords="perf:responsiveness">
+                                <label class="form-check-label" for="site-major"
+                                    title="i.e. prevents the user from using the website for its intended purpose, game running too slow to play for example, or pages taking seconds to load">
+                                    Renders site effectively unusable</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <h6>Configuration:</h6>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="affects-scenario"
+                                    id="scenario-general" checked data-multiplier="1">
+                                <label class="form-check-label" for="scenario-general">General</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="affects-scenario"
+                                    id="scenario-common" data-multiplier="0.5">
+                                <label class="form-check-label" for="scenario-common">Specific but common</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="affects-scenario" id="scenario-rare"
+                                    data-multiplier="0.3">
+                                <label class="form-check-label" for="scenario-rare">Rare</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <h6>Page load impact:</h6>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="pageload-impact" id="pageload-none"
+                                    checked data-basescore="0">
+                                <label class="form-check-label" for="pageload-none">None</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="pageload-impact" id="pageload-some"
+                                    data-basescore="5" data-keywords="perf:pageload">
+                                <label class="form-check-label" for="pageload-some">Some</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="pageload-impact" id="pageload-severe"
+                                    data-basescore="10" data-keywords="perf:pageload">
+                                <label class="form-check-label" for="pageload-severe">Severe</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <h6>Websites affected:</h6>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="pages-affected" id="pages-rare"
+                                    data-multiplier="0.3">
+                                <label class="form-check-label" for="pages-rare">Rare</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="pages-affected" id="pages-common"
+                                    checked data-multiplier="1">
+                                <label class="form-check-label" for="pages-common">Common</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="pages-affected" id="pages-major"
+                                    data-multiplier="5" data-keywords="top50">
+                                <label class="form-check-label" for="pages-major">Major</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-8 offset-md-4">
+                            <div class="form-check">
+                                <input id="resource-use" class="form-check-input" type="checkbox" data-basescore="2"
+                                    data-keywords="perf:resource-use">
+                                <label class="form-check-label" for="resource-use">Causes severe resource usage</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 offset-md-4">
+                            <div class="form-check">
+                                <input id="animation" class="form-check-input" type="checkbox" data-basescore="1"
+                                    data-keywords="perf:animation">
+                                <label class="form-check-label" for="animation">Affects animation smoothness</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 offset-md-4">
+                            <div class="form-check">
+                                <input id="reproducible" class="form-check-input" type="checkbox" data-multiplier="2"
+                                    data-keywords="reproducible">
+                                <label class="form-check-label" for="reproducible">Able to reproduce locally</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 offset-md-4">
+                            <div class="form-check">
+                                <input id="multiple-sites" class="form-check-input" type="checkbox" data-multiplier="2">
+                                <label class="form-check-label" for="multiple-sites">Bug affects multiple sites</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 offset-md-4">
+                            <div class="form-check">
+                                <input id="multiple-reporters" class="form-check-input" type="checkbox"
+                                    data-multiplier="1.5">
+                                <label class="form-check-label" for="multiple-reporters">Multiple reporters</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8 offset-md-4">
+                            <div class="form-check">
+                                <input id="chrome" class="form-check-input" type="checkbox" data-multiplier="0.3">
+                                <label class="form-check-label" for="chrome">Reproduces in Chrome</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-5">
+                    <div class="row mt-2">
+                        <div class="col">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h1><span class="badge bg-dark text-bg-dark" id="impact">low</span></h1>
+                                    <div class="text-muted">score: <span id="score">0</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text">Keywords</span>
+                                <input type="text" class="form-control" id="keywords" value="(none)" readonly size="50">
+                                <button class="btn btn-outline-secondary" type="button" id="copy-keywords"
+                                    onclick="copyKeywords()">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col">
+                            <!-- Other keywords: "perf:frontend" -->
+                            <input class="btn btn-primary" type="button" value="Copy Bugzilla Comment"
+                                onclick="copyTextSummary()">
+                            <input class="btn btn-secondary" type="reset" value="Reset Calculator">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        document.querySelector("form").addEventListener("input", refreshScore);
+        document
+            .querySelector("form")
+            .addEventListener("reset", () => setTimeout(refreshScore, 0));
+
+        function computeScore() {
+            const groups = getGroups();
+
+            let globalBasescore = 0;
+            let globalMultiplier = 1;
+            for (const input of document.querySelectorAll(
+                "[data-basescore]:checked, [data-multiplier]:checked"
+            )) {
+                const groupName = input.getAttribute("data-group");
+                const itemMultiplier = +(input.dataset.multiplier ?? "1");
+                const itemBasescore = +(input.dataset.basescore ?? "0");
+                if (groupName) {
+                    let group = groups.get(groupName);
+                    group.basescore += itemBasescore;
+                    group.multiplier *= itemMultiplier;
+                } else {
+                    globalBasescore += itemBasescore;
+                    globalMultiplier *= itemMultiplier;
+                }
+            }
+
+            for (const group of groups.values()) {
+                globalBasescore += group.getBasescore();
+                globalMultiplier *= group.getMultiplier();
+            }
+
+            const score = globalBasescore * globalMultiplier;
+            document.querySelector("#score").textContent = score.toFixed(2);
+            const [impact, scoreInterval] =
+                score == 0
+                    ? ["none", "=0"]
+                    : score < 10
+                        ? ["low", "0..10"]
+                        : score < 40
+                            ? ["medium", "10..40"]
+                            : ["high", "40.."];
+            document.querySelector("#impact").textContent = impact;
+
+            let keywords = new Set();
+            for (const input of document.querySelectorAll("[data-keywords]")) {
+                if (input.checked) {
+                    for (const keyword of input.dataset.keywords.split(" ")) {
+                        keywords.add(keyword);
+                    }
+                }
+            }
+
+            return { score, scoreInterval, impact, keywords };
+        }
+
+        function refreshScore() {
+            const { score, impact, keywords } = computeScore();
+            document.querySelector("#score").textContent = score.toFixed(2);
+            document.querySelector("#impact").textContent = impact;
+            document.querySelector("#keywords").value =
+                keywords.size == 0 ? "(none)" : [...keywords].join(", ");
+        }
+
+        function getGroups() {
+            const groups = new Map();
+            for (const input of document.querySelectorAll("[data-group]")) {
+                const groupName = input.getAttribute("data-group");
+                if (!groups.has(groupName)) {
+                    let maxBasescore = null;
+                    let maxMultiplier = null;
+                    if (input.dataset.groupMaxBasescore !== undefined) {
+                        maxBasescore = +input.dataset.groupMaxBasescore;
+                    }
+                    if (input.dataset.groupMaxMultiplier !== undefined) {
+                        maxMultiplier = +input.dataset.groupMaxMultiplier;
+                    }
+                    groups.set(groupName, new Group(maxBasescore, maxMultiplier));
+                }
+            }
+            return groups;
+        }
+
+        class Group {
+            constructor(maxBasescore, maxMultiplier) {
+                this.basescore = 0;
+                this.maxBasescore = maxBasescore;
+                this.multiplier = 1;
+                this.maxMultiplier = maxMultiplier;
+            }
+
+            getBasescore() {
+                if (this.maxBasescore !== undefined && this.basescore > this.maxBasescore) {
+                    return this.maxBasescore;
+                }
+                return this.basescore;
+            }
+
+            getMultiplier() {
+                if (
+                    this.maxMultiplier !== undefined &&
+                    this.multiplier > this.maxMultiplier
+                ) {
+                    return this.maxMultiplier;
+                }
+                return this.multiplier;
+            }
+        }
+
+        function computeTextSummary() {
+            const { impact, score, scoreInterval } = computeScore();
+            const summaryLines = [
+                `The [Performance Impact Calculator](https://mozilla.github.io/perf-triage/calculator.html) has determined this bug's performance impact to be **${impact}**. If you'd like to request re-triage, you can reset the Performance Impact flag to "?" or needinfo the triage sheriff.`,
+                ""
+            ];
+            const groups = getGroups();
+            for (const el of document.querySelectorAll("#formRows .row")) {
+                let checkedInputs = el.querySelectorAll(
+                    "[data-basescore]:checked, [data-multiplier]:checked"
+                );
+                let checkedInputsWithScoreImpact = Array.from(checkedInputs).filter(
+                    (input) => {
+                        const itemBasescore = +(input.dataset.basescore ?? "0");
+                        const itemMultiplier = +(input.dataset.multiplier ?? "1");
+                        return itemBasescore !== 0 || itemMultiplier !== 1;
+                    }
+                );
+                if (checkedInputsWithScoreImpact.length == 0) {
+                    continue;
+                }
+
+                const itemLabels = [];
+                for (const input of checkedInputs) {
+                    // let scoring =
+                    //   input.dataset.basescore !== undefined
+                    //     ? `+${el.dataset.basescore}`
+                    //     : `×${el.dataset.multiplier}`;
+                    let checkedLabel = input.parentNode.textContent.trim();
+                    // itemLabels.push(`${checkedLabel} (${scoring})`);
+                    itemLabels.push(checkedLabel);
+                }
+                let rowLabel = el.querySelector("h6");
+                if (rowLabel) {
+                    if (itemLabels.length > 1) {
+                        let stuff = itemLabels.map((il) => `[x] ${il}`).join(" ");
+                        summaryLines.push(`${rowLabel.textContent} ${stuff}`);
+                    } else {
+                        summaryLines.push(`${rowLabel.textContent} ${itemLabels[0]}`);
+                    }
+                } else {
+                    summaryLines.push(itemLabels.map((il) => `[x] ${il}`).join(" "));
+                }
+            }
+            // summaryLines.push(`Score: ${score.toFixed(2)} in ${scoreInterval} (${impact})`);
+            return summaryLines.join("\n");
+        }
+
+        function copyTextSummary() {
+            navigator.clipboard.writeText(computeTextSummary());
+        }
+
+        function copyKeywords() {
+            navigator.clipboard.writeText(document.querySelector("#keywords").value);
+        }
+
+        refreshScore();
+    </script>
+</body>
+
+</html>
