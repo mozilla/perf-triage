@@ -73,7 +73,6 @@ MEMBERS = [
         "Kimberly Sereduck", "kimberlythegeek", Geo.AMERICAS, cal_override="ksereduck"
     ),
     Person("Kash Shampur", "kshampur", Geo.AMERICAS),
-    Person("Esther", "eng_esther", Geo.AMERICAS, cal_override="eitimielo"),
 ]
 
 
