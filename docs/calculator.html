@@ -42,10 +42,10 @@
             <div class="row">
                 <div id="formRows" class="col-md-7">
                     <div class="row mt-2">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <h6>Platforms:</h6>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <div class="form-check form-check-inline">
                                 <input id="platform-windows" class="form-check-input" type="checkbox"
                                     data-group="affects-os" data-multiplier="3" data-group-max-multiplier="4">
@@ -70,10 +70,10 @@
                     </div>
 
                     <div class="row mt-2">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <h6>Impact on browser:</h6>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="affects-browser" id="browser-minor"
                                     checked data-basescore="0">
@@ -106,10 +106,10 @@
                     </div>
 
                     <div class="row mt-2">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <h6>Impact on site:</h6>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="affects-site" id="site-minor" checked
                                     data-basescore="0">
@@ -131,10 +131,10 @@
                     </div>
 
                     <div class="row mt-2">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <h6>Configuration:</h6>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="affects-scenario"
                                     id="scenario-general" checked data-multiplier="1">
@@ -154,10 +154,10 @@
                     </div>
 
                     <div class="row mt-2">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <h6>Page load impact:</h6>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="pageload-impact" id="pageload-none"
                                     checked data-basescore="0">
@@ -177,10 +177,10 @@
                     </div>
 
                     <div class="row mt-2">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <h6>Websites affected:</h6>
                         </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="pages-affected" id="pages-rare"
                                     data-multiplier="0.3">
@@ -200,7 +200,7 @@
                     </div>
 
                     <div class="row mt-2">
-                        <div class="col-md-8 offset-md-4">
+                        <div class="col-md-9 offset-md-3">
                             <div class="form-check">
                                 <input id="resource-use" class="form-check-input" type="checkbox" data-basescore="2"
                                     data-keywords="perf:resource-use">
@@ -209,7 +209,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-8 offset-md-4">
+                        <div class="col-md-9 offset-md-3">
                             <div class="form-check">
                                 <input id="animation" class="form-check-input" type="checkbox" data-basescore="1"
                                     data-keywords="perf:animation">
@@ -218,7 +218,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-8 offset-md-4">
+                        <div class="col-md-9 offset-md-3">
                             <div class="form-check">
                                 <input id="reproducible" class="form-check-input" type="checkbox" data-multiplier="2"
                                     data-keywords="reproducible">
@@ -227,7 +227,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-8 offset-md-4">
+                        <div class="col-md-9 offset-md-3">
                             <div class="form-check">
                                 <input id="multiple-sites" class="form-check-input" type="checkbox" data-multiplier="2">
                                 <label class="form-check-label" for="multiple-sites">Bug affects multiple sites</label>
@@ -235,7 +235,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-8 offset-md-4">
+                        <div class="col-md-9 offset-md-3">
                             <div class="form-check">
                                 <input id="multiple-reporters" class="form-check-input" type="checkbox"
                                     data-multiplier="1.5">
@@ -244,7 +244,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-8 offset-md-4">
+                        <div class="col-md-9 offset-md-3">
                             <div class="form-check">
                                 <input id="chrome" class="form-check-input" type="checkbox" data-multiplier="0.3">
                                 <label class="form-check-label" for="chrome">Reproduces in Chrome</label>
@@ -281,7 +281,8 @@
                                 onclick="copyTextSummary()">
                             <input class="btn btn-secondary" type="reset" value="Reset Calculator">
                             <label class="btn btn-secondary">
-                                <input type="checkbox" autocomplete="off" onclick="toggleDebug()"> Debug
+                                <input type="checkbox" class="form-check-input" autocomplete="off"
+                                    onclick="toggleDebug()"> Debug
                             </label>
                         </div>
                     </div>
