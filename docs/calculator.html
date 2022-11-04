@@ -280,6 +280,9 @@
                             <input class="btn btn-primary" type="button" value="Copy Bugzilla Comment"
                                 onclick="copyTextSummary()">
                             <input class="btn btn-secondary" type="reset" value="Reset Calculator">
+                            <label class="btn btn-secondary">
+                                <input type="checkbox" autocomplete="off" onclick="toggleDebug()"> Debug
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -292,6 +295,30 @@
         document
             .querySelector("form")
             .addEventListener("reset", () => setTimeout(refreshScore, 0));
+
+        function generateDebug() {
+            for (const input of document.querySelectorAll(
+                "[data-basescore], [data-multiplier]"
+            )) {
+                const debug = document.createElement("span");
+                debug.setAttribute("class", "badge rounded-pill text-bg-secondary debug");
+                debug.style.display = "none";
+                let debugText = "";
+                if (input.dataset.basescore) {
+                    debugText = "+" + input.dataset.basescore;
+                } else if ((input.dataset.multiplier)) {
+                    debugText = "×" + input.dataset.multiplier;
+                }
+                debug.appendChild(document.createTextNode(debugText));
+                input.parentElement.appendChild(debug);
+            }
+        }
+
+        function toggleDebug() {
+            for (const debug of document.querySelectorAll(".debug")) {
+                debug.style.display = debug.style.display == "inline" ? "none" : "inline";
+            }
+        }
 
         function computeScore() {
             const groups = getGroups();
@@ -452,6 +479,7 @@
             navigator.clipboard.writeText(document.querySelector("#keywords").value);
         }
 
+        generateDebug();
         refreshScore();
     </script>
 </body>
