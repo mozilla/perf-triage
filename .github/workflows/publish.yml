@@ -2,6 +2,8 @@ name: Generate rotation
 
 on:
   push:
+    branches:
+      - main
   schedule:
     - cron: '0 0 * * 1'  # every Monday at midnight
 
