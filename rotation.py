@@ -112,21 +112,105 @@ def generate_html(rotations):
     fpath = (path / "index.html").with_suffix(".html")
     this_week = rotations[get_week(DATE)]
     next_week = rotations[get_week(DATE + timedelta(weeks=1))]
+
+    html = """
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Performance Triage: Rotation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+        crossorigin="anonymous"></script>
+
+    <div class="container">
+        <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+                <svg class="bi me-2" width="40" height="32">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+                <span class="fs-4">Performance Triage: Rotation</span>
+            </a>
+
+            <ul class="nav nav-pills">
+                <li class="nav-item"><a href="calculator.html" class="nav-link">Impact Calculator</a></li>
+                <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">Rotation</a>
+                </li>
+            </ul>
+        </header>
+    </div>
+
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-sm-6">
+                <div class="card mb-3">
+                    <div class="card-header text-bg-primary">
+                        This week
+                    </div>
+                    <ol class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>{{this_week.leader}}</strong></li>
+                        {% for sheriff in this_week.sheriffs %}<li class="list-group-item">{{sheriff}}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="card mb-3">
+                    <div class="card-header text-bg-secondary">
+                        Next week
+                    </div>
+                    <ol class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>{{next_week.leader}}</strong></li>
+                        {% for sheriff in next_week.sheriffs %}<li class="list-group-item">{{sheriff}}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="col">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        History
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for date in history %}<li class="list-group-item">{{ date }}: <strong>{{ history[date].leader }}</strong>, {{ history[date].sheriffs }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <p>Generated on {{timestamp}}.</p>
+
+    </div>
+</body>
+
+</html>"""
+
+    import jinja2
+    environment = jinja2.Environment()
+    template = environment.from_string(html)
+    history = dict(sorted(rotations.items(), reverse=True)[2:])
+
     with fpath.open(mode="w+") as html:
-        html.write("<html><body><h1>Performance Triage</h1>")
-        html.write(f"<p>Generated on {DATE}.</p>")
-        html.write(f"<h2>This week</h2><ol>")
-        html.write(f"<li><strong>{this_week.leader}</strong></li>")
-        for s in this_week.sheriffs:
-            html.write(f"<li>{s}</li>")
-        html.write(f"</ol><h2>Next week</h2><ol>")
-        html.write(f"<li><strong>{next_week.leader}</strong></li>")
-        for s in next_week.sheriffs:
-            html.write(f"<li>{s}</li>")
-        html.write(f"</ol><h2>History</h2><ul>")
-        for _, r in list(sorted(rotations.items(), reverse=True))[2:]:
-            html.write(f"<li><strong>{r.leader}</strong>, {r.sheriffs}</li>")
-        html.write("</ul></body></html>")
+        html.write(template.render(
+            this_week=this_week,
+            next_week=next_week,
+            history=history,
+            timestamp=DATE))
 
 
 def generate_rotation(leaders, rotations):
