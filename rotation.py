@@ -61,7 +61,6 @@ MEMBERS = [
     Person("Julien Wajsberg", "julienw", Geo.EUROPE_AFRICA, True),
     Person("Marc Leclair", "mleclair", Geo.AMERICAS),
     Person("Markus Stange", "mstange", Geo.AMERICAS, True),
-    Person("Michael Comella", "mcomella", Geo.AMERICAS, True),
     Person("Mike Conley", "mconley", Geo.AMERICAS),
     Person("Nazim Can Altinova", "canova", Geo.EUROPE_AFRICA, cal_override="naltinova"),
     Person("Olli Pettay", "smaug", Geo.EUROPE_AFRICA),
@@ -73,6 +72,7 @@ MEMBERS = [
         "Kimberly Sereduck", "kimberlythegeek", Geo.AMERICAS, cal_override="ksereduck"
     ),
     Person("Kash Shampur", "kshampur", Geo.AMERICAS),
+    Person("Justin Link", "jlink", Geo.AMERICAS),
 ]
 
 
