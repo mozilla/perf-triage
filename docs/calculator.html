@@ -452,7 +452,7 @@
                     //   input.dataset.basescore !== undefined
                     //     ? `+${el.dataset.basescore}`
                     //     : `×${el.dataset.multiplier}`;
-                    let checkedLabel = input.parentNode.textContent.trim();
+                    let checkedLabel = input.nextElementSibling.textContent.trim();
                     // itemLabels.push(`${checkedLabel} (${scoring})`);
                     itemLabels.push(checkedLabel);
                 }
