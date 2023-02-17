@@ -26,19 +26,29 @@
                 <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">Impact Calculator</a></li>
                 <li class="nav-item"><a href="index.html" class="nav-link">Rotation</a></li>
             </ul>
+
+            <a class="mx-3 d-flex" href="https://github.com/mozilla/perf-triage" target="_blank" rel="noopener noreferrer" title="Go to the Git repository (this opens in a new window)">
+              <svg width="22" height="22" class="octicon octicon-mark-github m-auto" viewBox="0 0 16 16" version="1.1" aria-label="github"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
+            </a>
         </header>
     </div>
 
     <form>
         <div class="container">
 
-            <div class="alert alert-primary d-flex justify-content-between" role="alert">
+            <aside class="alert alert-primary d-flex gap-4 px-4">
+              <!-- mt-1 miracously aligns the icon with the top edge of the text -->
+              <svg width="22" height="22" fill="currentColor" viewBox="0 0 16 16" class="bi bi-info-circle-fill mt-1 flex-shrink-0 flex-grow-0">
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+              </svg>
               <div>
-                Changes to this calculator can be suggested in the
+                If, for a bug that you have to triage, you find that this tool
+                doesn't have appropriate questions, or gives surprising results, we
+                encourage you to bring this up on the
                 <a href="https://chat.mozilla.org/#/room/#perf-triage:mozilla.org" class="alert-link">#perf-triage Matrix channel</a>.
+                If you prefer you can <a href="https://github.com/mozilla/perf-triage/issues/new" class="alert-link">file an issue</a> directly on the github repository for this tool.
               </div>
-              <a class="mx-3" href="https://github.com/mozilla/perf-triage" target="_blank" rel="noopener noreferrer" title="Go to the Git repository (this opens in a new window)"><svg width="22" height="22" class="octicon octicon-mark-github" viewBox="0 0 16 16" version="1.1" aria-label="github"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg></a>
-            </div>
+            </aside>
 
             <div class="row">
                 <div id="formRows" class="col-md-7">
