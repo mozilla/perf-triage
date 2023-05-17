@@ -73,6 +73,9 @@ MEMBERS = [
     ),
     Person("Kash Shampur", "kshampur", Geo.AMERICAS),
     Person("Justin Link", "jlink", Geo.AMERICAS),
+    Person(
+        "Emilio Cobos Álvarez", "emilio", Geo.EUROPE_AFRICA, cal_override="ealvarez"
+    ),
 ]
 
 
