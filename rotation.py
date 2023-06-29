@@ -68,9 +68,6 @@ MEMBERS = [
     Person("Sean Feng", "sefeng", Geo.AMERICAS, True),
     Person("Frank Doty", "frankdoty", Geo.AMERICAS, cal_override="fdoty"),
     Person("Andrej Glavic", "andrej", Geo.AMERICAS, cal_override="aglavic"),
-    Person(
-        "Kimberly Sereduck", "kimberlythegeek", Geo.AMERICAS, cal_override="ksereduck"
-    ),
     Person("Kash Shampur", "kshampur", Geo.AMERICAS),
     Person("Justin Link", "jlink", Geo.AMERICAS),
     Person(
