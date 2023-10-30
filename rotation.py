@@ -206,37 +206,48 @@ def generate_html(rotations):
 </html>"""
 
     import jinja2
+
     environment = jinja2.Environment()
     template = environment.from_string(html)
     history = dict(sorted(rotations.items(), reverse=True)[2:])
 
     with fpath.open(mode="w+") as html:
-        html.write(template.render(
-            this_week=this_week,
-            next_week=next_week,
-            history=history,
-            timestamp=DATE))
+        html.write(
+            template.render(
+                this_week=this_week,
+                next_week=next_week,
+                history=history,
+                timestamp=DATE,
+            )
+        )
 
 
 def generate_rotation(leaders, rotations):
     leader_candidates = leaders.copy()
+    sheriff_candidates = MEMBERS.copy()
+
     # remove recent leaders from pool
-    for _, r in list(sorted(rotations.items()))[(len(leaders) - 1) * -1 :]:
+    for _, r in list(sorted(rotations.items()))[(len(leaders) // 2) * -1 :]:
         if r.leader in leader_candidates:
             leader_candidates.remove(r.leader)
-    leader = random.choice(leader_candidates)
 
-    sheriff_candidates = MEMBERS.copy()
-    # remove leader from pool
-    sheriff_candidates.remove(leader)
-    # remove recent sheriffs from pool
+    # remove recent sheriffs from pools
     for w, r in list(sorted(rotations.items()))[-4:]:
         if r.leader in sheriff_candidates:
             sheriff_candidates.remove(r.leader)
         for sheriff in r.sheriffs:
+            if sheriff in leader_candidates:
+                leader_candidates.remove(sheriff)
             if sheriff in sheriff_candidates:
                 sheriff_candidates.remove(sheriff)
-    # pick sheriffs for each triage rotation
+
+    # pick a leader
+    leader = random.choice(leader_candidates)
+
+    # remove leader from pool
+    sheriff_candidates.remove(leader)
+
+    # pick sheriffs from pool
     sheriffs = []
     for _ in range(2):
         geos = {s.geo for s in [leader] + sheriffs}
@@ -387,12 +398,16 @@ def main():
         # catch all exceptions to be safe and avoid this possibility.
         # TODO: separate this into a separate build task to make generate rotation even safer.
         if type(err) is HttpError:
-            logging.exception("during network request when adding google calendar reminder")
+            logging.exception(
+                "during network request when adding google calendar reminder"
+            )
         elif type(err) is FileNotFoundError:
-            logging.exception("unable to locate Google Cloud Project secrets when adding google calendar reminder")
+            logging.exception(
+                "unable to locate Google Cloud Project secrets when adding google calendar reminder"
+            )
         else:
             # Exception types include gcal.CredentialException & GoogleAuthError
-            logging.exception('cause unknown')
+            logging.exception("cause unknown")
 
 
 if __name__ == "__main__":
