@@ -211,14 +211,28 @@
                     </div>
 
                     <div class="row mt-2">
-                        <div class="col-md-9 offset-md-3">
-                            <div class="form-check">
-                                <input id="resource-use" class="form-check-input" type="checkbox" data-basescore="2"
-                                    data-keywords="perf:resource-use">
-                                <label class="form-check-label" for="resource-use">Causes severe resource usage</label>
+                        <div class="col-md-3">
+                            <h6>Resource impact:</h6>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="resource-impact" id="resource-none"
+                                    checked data-basescore="0">
+                                <label class="form-check-label" for="resource-none">None</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="resource-impact" id="resource-some"
+                                    data-basescore="0.4" data-keywords="perf:resource-use">
+                                <label class="form-check-label" for="resource-some">Some</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="resource-impact" id="resource-severe"
+                                    data-basescore="2" data-keywords="perf:resource-use">
+                                <label class="form-check-label" for="resource-severe">Severe</label>
                             </div>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-md-9 offset-md-3">
                             <div class="form-check">
