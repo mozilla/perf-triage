@@ -16,9 +16,6 @@
     <div class="container">
         <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
             <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
-                <svg class="bi me-2" width="40" height="32">
-                    <use xlink:href="#bootstrap"></use>
-                </svg>
                 <span class="fs-4">Performance Triage: Impact Calculator</span>
             </a>
 
@@ -205,7 +202,10 @@
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="pages-affected" id="pages-major"
                                     data-multiplier="5" data-keywords="top50">
-                                <label class="form-check-label" for="pages-major">Major</label>
+                                <label class="form-check-label" for="pages-major" data-toggle="tooltip"
+                                    title="A performance regression that affects a major website would be noticeable by a significant population of our users. If you're unsure, anything in similarweb's top websites ranking (linked here) would be considered a major site.">
+                                    <a href="https://www.similarweb.com/top-websites/">Major</a>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -317,6 +317,11 @@
     </form>
 
     <script>
+        var tooltips = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'));
+        tooltips.map(function (element) {
+            return new bootstrap.Tooltip(element)
+        });
+
         document.querySelector("form").addEventListener("input", refreshScore);
         document
             .querySelector("form")
