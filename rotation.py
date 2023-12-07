@@ -53,7 +53,7 @@ MEMBERS = [
     Person("Daniel Holbert", "dholbert", Geo.AMERICAS),
     Person("Dave Hunt", "davehunt", Geo.EUROPE_AFRICA),
     Person("Denis Palmeiro", "denispal", Geo.AMERICAS, True, cal_override="dpalmeiro"),
-    Person("Doug Thayer", "dthayer", Geo.AMERICAS, True, cal_override="dothayer"),
+    Person("Alex Thayer", "alexical", Geo.AMERICAS, True, cal_override="dothayer"),
     Person("Florian Quèze", "florian", Geo.EUROPE_AFRICA, True),
     Person(
         "Gregory Mierzwinski", "sparky", Geo.AMERICAS, True, cal_override="gmierzwinski"
