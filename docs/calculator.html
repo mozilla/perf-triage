@@ -379,6 +379,51 @@
             refreshScore();
         }
 
+        function generateURLFromForm() {
+            var params = [];
+
+            // Get the values of the platform checkboxes that are checked
+            var platforms = document.querySelectorAll('input[type=checkbox][id^=platform]:checked');
+            if (platforms.length > 0) {
+                var platformValues = [];
+                platforms.forEach(function(platform) {
+                    platformValues.push(platform.id.replace('platform-', ''));
+                });
+                params.push('platform=' + platformValues.join(','));
+            }
+
+            var impactOnBrowser = document.querySelector('input[type=radio][name=affects-browser]:checked');
+            params.push('browser=' + impactOnBrowser.id.replace('browser-', ''));
+
+            var impactOnSite = document.querySelector('input[type=radio][name=affects-site]:checked');
+            params.push('site=' + impactOnSite.id.replace('site-', ''));
+
+            var configuration = document.querySelector('input[type=radio][name=affects-scenario]:checked');
+            params.push('config=' + configuration.id.replace('scenario-', ''));
+
+            var pageLoadImpact = document.querySelector('input[type=radio][name=pageload-impact]:checked');
+            params.push('pageload=' + pageLoadImpact.id.replace('pageload-', ''));
+
+            var pagesAffected = document.querySelector('input[type=radio][name=pages-affected]:checked');
+            params.push('pages=' + pagesAffected.id.replace('pages-', ''));
+
+            var resourceImpact = document.querySelector('input[type=radio][name=resource-impact]:checked');
+            params.push('resource=' + resourceImpact.id.replace('resource-', ''));
+
+            var additionalCheckboxes = document.querySelectorAll('input[type=checkbox]:checked');
+            additionalCheckboxes.forEach(function(checkbox) {
+                params.push(checkbox.id + '=true');
+            });
+
+            // Combine all parameters into a single URL string
+            var url = window.location.origin + window.location.pathname;
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+
+            return url;
+        }
+
         function generateDebug() {
             for (const input of document.querySelectorAll(
                 "[data-basescore], [data-multiplier]"
@@ -459,6 +504,8 @@
             document.querySelector("#impact").textContent = impact;
             document.querySelector("#keywords").value =
                 keywords.size == 0 ? "(none)" : [...keywords].join(", ");
+            var newURL = generateURLFromForm();
+            window.history.replaceState(null, null, newURL);
         }
 
         function getGroups() {
