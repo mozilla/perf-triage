@@ -327,6 +327,58 @@
             .querySelector("form")
             .addEventListener("reset", () => setTimeout(refreshScore, 0));
 
+        function populateFormFromURL() {
+            var queryString = window.location.search;
+            var urlParams = new URLSearchParams(queryString);
+
+            var platforms = urlParams.get('platform');
+            if (platforms) {
+                platforms = platforms.split(",");
+                platforms.forEach(function(platform) {
+                    document.getElementById("platform-" + platform.trim()).checked = true;
+                });
+            }
+
+            var impactOnBrowser = urlParams.get('browser');
+            if (impactOnBrowser) {
+                document.getElementById("browser-" + impactOnBrowser).checked = true;
+            }
+
+            var impactOnSite = urlParams.get('site');
+            if (impactOnSite) {
+                document.getElementById("site-" + impactOnSite).checked = true;
+            }
+
+            var configuration = urlParams.get('config');
+            if (configuration) {
+                document.getElementById("scenario-" + configuration).checked = true;
+            }
+
+            var pageLoadImpact = urlParams.get('pageload');
+            if (pageLoadImpact) {
+                document.getElementById("pageload-" + pageLoadImpact).checked = true;
+            }
+
+            var pagesAffected = urlParams.get('pages');
+            if (pagesAffected) {
+                document.getElementById("pages-" + pagesAffected).checked = true;
+            }
+
+            var resourceImpact = urlParams.get('resource');
+            if (resourceImpact) {
+                document.getElementById("resource-" + resourceImpact).checked = true;
+            }
+
+            document.getElementById("animation").checked = (urlParams.get('animation') === 'true');
+            document.getElementById("reproducible").checked = (urlParams.get('reproducible') === 'true');
+            document.getElementById("multiple-sites").checked = (urlParams.get('multiple-sites') === 'true');
+            document.getElementById("multiple-reporters").checked = (urlParams.get('multiple-reporters') === 'true');
+            document.getElementById("chrome").checked = (urlParams.get('chrome') === 'true');
+
+            // Refresh the score after populating the form
+            refreshScore();
+        }
+
         function generateDebug() {
             for (const input of document.querySelectorAll(
                 "[data-basescore], [data-multiplier]"
@@ -510,8 +562,10 @@
             navigator.clipboard.writeText(document.querySelector("#keywords").value);
         }
 
-        generateDebug();
-        refreshScore();
+        window.onload = function() {
+            generateDebug();
+            populateFormFromURL();
+        };
     </script>
 </body>
 
