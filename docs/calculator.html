@@ -556,7 +556,7 @@
         function computeTextSummary() {
             const { impact, score, scoreInterval } = computeScore();
             const summaryLines = [
-                `The [Performance Impact Calculator](https://mozilla.github.io/perf-triage/calculator.html) has determined this bug's performance impact to be **${impact}**. If you'd like to request re-triage, you can reset the Performance Impact flag to "?" or needinfo the triage sheriff.`,
+                `The [Performance Impact Calculator](${generateURLFromForm()}) has determined this bug's performance impact to be **${impact}**. If you'd like to request re-triage, you can reset the Performance Impact flag to "?" or needinfo the triage sheriff.`,
                 ""
             ];
             const groups = getGroups();
