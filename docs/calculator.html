@@ -329,9 +329,9 @@
 
         function populateFormFromURL() {
             var queryString = window.location.search;
-            var urlParams = new URLSearchParams(queryString);
+            var searchParams = new URLSearchParams(queryString);
 
-            var platforms = urlParams.get('platform');
+            var platforms = searchParams.get('platform');
             if (platforms) {
                 platforms = platforms.split(",");
                 platforms.forEach(function(platform) {
@@ -339,48 +339,48 @@
                 });
             }
 
-            var impactOnBrowser = urlParams.get('browser');
+            var impactOnBrowser = searchParams.get('browser');
             if (impactOnBrowser) {
                 document.getElementById("browser-" + impactOnBrowser).checked = true;
             }
 
-            var impactOnSite = urlParams.get('site');
+            var impactOnSite = searchParams.get('site');
             if (impactOnSite) {
                 document.getElementById("site-" + impactOnSite).checked = true;
             }
 
-            var configuration = urlParams.get('config');
+            var configuration = searchParams.get('config');
             if (configuration) {
                 document.getElementById("scenario-" + configuration).checked = true;
             }
 
-            var pageLoadImpact = urlParams.get('pageload');
+            var pageLoadImpact = searchParams.get('pageload');
             if (pageLoadImpact) {
                 document.getElementById("pageload-" + pageLoadImpact).checked = true;
             }
 
-            var pagesAffected = urlParams.get('pages');
+            var pagesAffected = searchParams.get('pages');
             if (pagesAffected) {
                 document.getElementById("pages-" + pagesAffected).checked = true;
             }
 
-            var resourceImpact = urlParams.get('resource');
+            var resourceImpact = searchParams.get('resource');
             if (resourceImpact) {
                 document.getElementById("resource-" + resourceImpact).checked = true;
             }
 
-            document.getElementById("animation").checked = (urlParams.get('animation') === 'true');
-            document.getElementById("reproducible").checked = (urlParams.get('reproducible') === 'true');
-            document.getElementById("multiple-sites").checked = (urlParams.get('multiple-sites') === 'true');
-            document.getElementById("multiple-reporters").checked = (urlParams.get('multiple-reporters') === 'true');
-            document.getElementById("chrome").checked = (urlParams.get('chrome') === 'true');
+            document.getElementById("animation").checked = (searchParams.get('animation') === 'true');
+            document.getElementById("reproducible").checked = (searchParams.get('reproducible') === 'true');
+            document.getElementById("multiple-sites").checked = (searchParams.get('multiple-sites') === 'true');
+            document.getElementById("multiple-reporters").checked = (searchParams.get('multiple-reporters') === 'true');
+            document.getElementById("chrome").checked = (searchParams.get('chrome') === 'true');
 
             // Refresh the score after populating the form
             refreshScore();
         }
 
         function generateURLFromForm() {
-            var params = [];
+            var searchParams = new URLSearchParams();
 
             // Get the values of the platform checkboxes that are checked
             var platforms = document.querySelectorAll('input[type=checkbox][id^=platform]:checked');
@@ -389,38 +389,33 @@
                 platforms.forEach(function(platform) {
                     platformValues.push(platform.id.replace('platform-', ''));
                 });
-                params.push('platform=' + platformValues.join(','));
+                searchParams.append('platform', platformValues.join(','));
             }
 
             var impactOnBrowser = document.querySelector('input[type=radio][name=affects-browser]:checked');
-            params.push('browser=' + impactOnBrowser.id.replace('browser-', ''));
+            searchParams.append('browser', impactOnBrowser.id.replace('browser-', ''));
 
             var impactOnSite = document.querySelector('input[type=radio][name=affects-site]:checked');
-            params.push('site=' + impactOnSite.id.replace('site-', ''));
+            searchParams.append('site', impactOnSite.id.replace('site-', ''));
 
             var configuration = document.querySelector('input[type=radio][name=affects-scenario]:checked');
-            params.push('config=' + configuration.id.replace('scenario-', ''));
+            searchParams.append('config', configuration.id.replace('scenario-', ''));
 
             var pageLoadImpact = document.querySelector('input[type=radio][name=pageload-impact]:checked');
-            params.push('pageload=' + pageLoadImpact.id.replace('pageload-', ''));
+            searchParams.append('pageload', pageLoadImpact.id.replace('pageload-', ''));
 
             var pagesAffected = document.querySelector('input[type=radio][name=pages-affected]:checked');
-            params.push('pages=' + pagesAffected.id.replace('pages-', ''));
+            searchParams.append('pages', pagesAffected.id.replace('pages-', ''));
 
             var resourceImpact = document.querySelector('input[type=radio][name=resource-impact]:checked');
-            params.push('resource=' + resourceImpact.id.replace('resource-', ''));
+            searchParams.append('resource', resourceImpact.id.replace('resource-', ''));
 
             var additionalCheckboxes = document.querySelectorAll('input[type=checkbox]:checked');
             additionalCheckboxes.forEach(function(checkbox) {
-                params.push(checkbox.id + '=true');
+                searchParams.append(checkbox.id, 'true');
             });
 
-            // Combine all parameters into a single URL string
-            var url = window.location.origin + window.location.pathname;
-            if (params.length > 0) {
-                url += '?' + params.join('&');
-            }
-
+            var url = window.location.origin + window.location.pathname + '?' + searchParams.toString();
             return url;
         }
 
