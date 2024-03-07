@@ -56,22 +56,22 @@
                         <div class="col-md-9">
                             <div class="form-check form-check-inline">
                                 <input id="platform-windows" class="form-check-input" type="checkbox"
-                                    data-group="affects-os" data-multiplier="3" data-group-max-multiplier="4">
+                                    data-group="affects-os" data-multiplier="3" data-group-max-multiplier="4" name="platform-windows" value="true">
                                 <label class="form-check-label" for="platform-windows">Windows</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input id="platform-macos" class="form-check-input" type="checkbox"
-                                    data-group="affects-os" data-multiplier="3" data-group-max-multiplier="4">
+                                    data-group="affects-os" data-multiplier="3" data-group-max-multiplier="4" name="platform-macos" value="true">
                                 <label class="form-check-label" for="platform-macos">macOS</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input id="platform-linux" class="form-check-input" type="checkbox"
-                                    data-group="affects-os" data-multiplier="1" data-group-max-multiplier="4">
+                                    data-group="affects-os" data-multiplier="1" data-group-max-multiplier="4" name="platform-linux" value="true">
                                 <label class="form-check-label" for="platform-linux">Linux</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input id="platform-android" class="form-check-input" type="checkbox"
-                                    data-group="affects-os" data-multiplier="1.5" data-group-max-multiplier="4">
+                                    data-group="affects-os" data-multiplier="1.5" data-group-max-multiplier="4" name="platform-android" value="true">
                                 <label class="form-check-label" for="platform-android">Android</label>
                             </div>
                         </div>
@@ -84,29 +84,29 @@
                         <div class="col-md-9">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="affects-browser" id="browser-minor"
-                                    checked data-basescore="0">
+                                    checked data-basescore="0" value="minor">
                                 <label class="form-check-label" for="browser-minor">Minor</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="affects-browser" id="browser-startup"
-                                    data-basescore="5" data-keywords="perf:startup">
+                                    data-basescore="5" data-keywords="perf:startup" value="startup">
                                 <label class="form-check-label" for="browser-startup">
                                     Causes noticeable startup delay</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="affects-browser"
-                                    id="browser-shutdown" data-basescore="2">
+                                    id="browser-shutdown" data-basescore="2" value="shutdown">
                                 <label class="form-check-label" for="browser-shutdown">
                                     Causes noticeable shutdown delay</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="affects-browser" id="browser-jank"
-                                    data-basescore="5" data-keywords="perf:responsiveness">
+                                    data-basescore="5" data-keywords="perf:responsiveness" value="jank">
                                 <label class="form-check-label" for="browser-jank">Causes noticeable jank</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="affects-browser" id="browser-major"
-                                    data-basescore="10" data-keywords="perf:responsiveness">
+                                    data-basescore="10" data-keywords="perf:responsiveness" value="major">
                                 <label class="form-check-label" for="browser-major">
                                     Renders browser effectively unusable</label>
                             </div>
@@ -120,17 +120,17 @@
                         <div class="col-md-9">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="affects-site" id="site-minor" checked
-                                    data-basescore="0">
+                                    data-basescore="0" value="minor">
                                 <label class="form-check-label" for="site-minor">Minor</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="affects-site" id="site-noticeable"
-                                    data-basescore="2" data-keywords="perf:responsiveness">
+                                    data-basescore="2" data-keywords="perf:responsiveness" value="noticeable">
                                 <label class="form-check-label" for="site-noticeable">Causes noticeable jank</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="affects-site" id="site-major"
-                                    data-basescore="3" data-keywords="perf:responsiveness">
+                                    data-basescore="3" data-keywords="perf:responsiveness" value="major">
                                 <label class="form-check-label" for="site-major"
                                     title="i.e. prevents the user from using the website for its intended purpose, game running too slow to play for example, or pages taking seconds to load">
                                     Renders site effectively unusable</label>
@@ -145,17 +145,17 @@
                         <div class="col-md-9">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="affects-scenario"
-                                    id="scenario-general" checked data-multiplier="1">
+                                    id="scenario-general" checked data-multiplier="1" value="general">
                                 <label class="form-check-label" for="scenario-general">General</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="affects-scenario"
-                                    id="scenario-common" data-multiplier="0.5">
+                                    id="scenario-common" data-multiplier="0.5" value="common">
                                 <label class="form-check-label" for="scenario-common">Specific but common</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="affects-scenario" id="scenario-rare"
-                                    data-multiplier="0.3">
+                                    data-multiplier="0.3" value="rare">
                                 <label class="form-check-label" for="scenario-rare">Rare</label>
                             </div>
                         </div>
@@ -168,17 +168,17 @@
                         <div class="col-md-9">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="pageload-impact" id="pageload-none"
-                                    checked data-basescore="0">
+                                    checked data-basescore="0" value="none">
                                 <label class="form-check-label" for="pageload-none">None</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="pageload-impact" id="pageload-some"
-                                    data-basescore="5" data-keywords="perf:pageload">
+                                    data-basescore="5" data-keywords="perf:pageload" value="some">
                                 <label class="form-check-label" for="pageload-some">Some</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="pageload-impact" id="pageload-severe"
-                                    data-basescore="10" data-keywords="perf:pageload">
+                                    data-basescore="10" data-keywords="perf:pageload" value="severe">
                                 <label class="form-check-label" for="pageload-severe">Severe</label>
                             </div>
                         </div>
@@ -191,17 +191,17 @@
                         <div class="col-md-9">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="pages-affected" id="pages-rare"
-                                    data-multiplier="0.3">
+                                    data-multiplier="0.3" value="rare">
                                 <label class="form-check-label" for="pages-rare">Rare</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="pages-affected" id="pages-common"
-                                    checked data-multiplier="1">
+                                    checked data-multiplier="1" value="common">
                                 <label class="form-check-label" for="pages-common">Common</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="pages-affected" id="pages-major"
-                                    data-multiplier="5" data-keywords="top50">
+                                    data-multiplier="5" data-keywords="top50" value="major">
                                 <label class="form-check-label" for="pages-major" data-toggle="tooltip"
                                     title="A performance regression that affects a major website would be noticeable by a significant population of our users. If you're unsure, anything in similarweb's top websites ranking (linked here) would be considered a major site.">
                                     <a href="https://www.similarweb.com/top-websites/">Major</a>
@@ -217,17 +217,17 @@
                         <div class="col-md-9">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="resource-impact" id="resource-none"
-                                    checked data-basescore="0">
+                                    checked data-basescore="0" value="none">
                                 <label class="form-check-label" for="resource-none">None</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="resource-impact" id="resource-some"
-                                    data-basescore="0.4" data-keywords="perf:resource-use">
+                                    data-basescore="0.4" data-keywords="perf:resource-use" value="some">
                                 <label class="form-check-label" for="resource-some">Some</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="resource-impact" id="resource-severe"
-                                    data-basescore="2" data-keywords="perf:resource-use">
+                                    data-basescore="2" data-keywords="perf:resource-use" value="severe">
                                 <label class="form-check-label" for="resource-severe">Severe</label>
                             </div>
                         </div>
@@ -237,7 +237,7 @@
                         <div class="col-md-9 offset-md-3">
                             <div class="form-check">
                                 <input id="animation" class="form-check-input" type="checkbox" data-basescore="1"
-                                    data-keywords="perf:animation">
+                                    data-keywords="perf:animation" name="animation" value="true">
                                 <label class="form-check-label" for="animation">Affects animation smoothness</label>
                             </div>
                         </div>
@@ -246,7 +246,7 @@
                         <div class="col-md-9 offset-md-3">
                             <div class="form-check">
                                 <input id="reproducible" class="form-check-input" type="checkbox" data-multiplier="2"
-                                    data-keywords="reproducible">
+                                    data-keywords="reproducible" name="reproducible" value="true">
                                 <label class="form-check-label" for="reproducible">Able to reproduce locally</label>
                             </div>
                         </div>
@@ -254,7 +254,7 @@
                     <div class="row">
                         <div class="col-md-9 offset-md-3">
                             <div class="form-check">
-                                <input id="multiple-sites" class="form-check-input" type="checkbox" data-multiplier="2">
+                                <input id="multiple-sites" class="form-check-input" type="checkbox" data-multiplier="2" name="multiple-sites" value="true">
                                 <label class="form-check-label" for="multiple-sites">Bug affects multiple sites</label>
                             </div>
                         </div>
@@ -263,7 +263,7 @@
                         <div class="col-md-9 offset-md-3">
                             <div class="form-check">
                                 <input id="multiple-reporters" class="form-check-input" type="checkbox"
-                                    data-multiplier="1.5">
+                                    data-multiplier="1.5" name="multiple-reporters" value="true">
                                 <label class="form-check-label" for="multiple-reporters">Multiple reporters</label>
                             </div>
                         </div>
@@ -271,7 +271,7 @@
                     <div class="row">
                         <div class="col-md-9 offset-md-3">
                             <div class="form-check">
-                                <input id="chrome" class="form-check-input" type="checkbox" data-multiplier="0.3">
+                                <input id="chrome" class="form-check-input" type="checkbox" data-multiplier="0.3" name="chrome" value="true">
                                 <label class="form-check-label" for="chrome">Reproduces in Chrome</label>
                             </div>
                         </div>
@@ -328,100 +328,18 @@
             .addEventListener("reset", () => setTimeout(refreshScore, 0));
 
         function populateFormFromURL() {
-            var queryString = window.location.search;
-            var urlParams = new URLSearchParams(queryString);
-
-            var platforms = urlParams.get('platform');
-            if (platforms) {
-                platforms = platforms.split(",");
-                platforms.forEach(function(platform) {
-                    document.getElementById("platform-" + platform.trim()).checked = true;
-                });
+            var searchParams = new URLSearchParams(window.location.search);
+            for (const [name, value] of searchParams) {
+                document.querySelector(`[name="${name}"][value="${value}"]`).checked = true
             }
-
-            var impactOnBrowser = urlParams.get('browser');
-            if (impactOnBrowser) {
-                document.getElementById("browser-" + impactOnBrowser).checked = true;
-            }
-
-            var impactOnSite = urlParams.get('site');
-            if (impactOnSite) {
-                document.getElementById("site-" + impactOnSite).checked = true;
-            }
-
-            var configuration = urlParams.get('config');
-            if (configuration) {
-                document.getElementById("scenario-" + configuration).checked = true;
-            }
-
-            var pageLoadImpact = urlParams.get('pageload');
-            if (pageLoadImpact) {
-                document.getElementById("pageload-" + pageLoadImpact).checked = true;
-            }
-
-            var pagesAffected = urlParams.get('pages');
-            if (pagesAffected) {
-                document.getElementById("pages-" + pagesAffected).checked = true;
-            }
-
-            var resourceImpact = urlParams.get('resource');
-            if (resourceImpact) {
-                document.getElementById("resource-" + resourceImpact).checked = true;
-            }
-
-            document.getElementById("animation").checked = (urlParams.get('animation') === 'true');
-            document.getElementById("reproducible").checked = (urlParams.get('reproducible') === 'true');
-            document.getElementById("multiple-sites").checked = (urlParams.get('multiple-sites') === 'true');
-            document.getElementById("multiple-reporters").checked = (urlParams.get('multiple-reporters') === 'true');
-            document.getElementById("chrome").checked = (urlParams.get('chrome') === 'true');
-
-            // Refresh the score after populating the form
             refreshScore();
         }
 
         function generateURLFromForm() {
-            var params = [];
-
-            // Get the values of the platform checkboxes that are checked
-            var platforms = document.querySelectorAll('input[type=checkbox][id^=platform]:checked');
-            if (platforms.length > 0) {
-                var platformValues = [];
-                platforms.forEach(function(platform) {
-                    platformValues.push(platform.id.replace('platform-', ''));
-                });
-                params.push('platform=' + platformValues.join(','));
-            }
-
-            var impactOnBrowser = document.querySelector('input[type=radio][name=affects-browser]:checked');
-            params.push('browser=' + impactOnBrowser.id.replace('browser-', ''));
-
-            var impactOnSite = document.querySelector('input[type=radio][name=affects-site]:checked');
-            params.push('site=' + impactOnSite.id.replace('site-', ''));
-
-            var configuration = document.querySelector('input[type=radio][name=affects-scenario]:checked');
-            params.push('config=' + configuration.id.replace('scenario-', ''));
-
-            var pageLoadImpact = document.querySelector('input[type=radio][name=pageload-impact]:checked');
-            params.push('pageload=' + pageLoadImpact.id.replace('pageload-', ''));
-
-            var pagesAffected = document.querySelector('input[type=radio][name=pages-affected]:checked');
-            params.push('pages=' + pagesAffected.id.replace('pages-', ''));
-
-            var resourceImpact = document.querySelector('input[type=radio][name=resource-impact]:checked');
-            params.push('resource=' + resourceImpact.id.replace('resource-', ''));
-
-            var additionalCheckboxes = document.querySelectorAll('input[type=checkbox]:checked');
-            additionalCheckboxes.forEach(function(checkbox) {
-                params.push(checkbox.id + '=true');
-            });
-
-            // Combine all parameters into a single URL string
-            var url = window.location.origin + window.location.pathname;
-            if (params.length > 0) {
-                url += '?' + params.join('&');
-            }
-
-            return url;
+            const formData = new FormData(document.querySelector("form"));
+            const searchParams = new URLSearchParams(formData);
+            const searchString = searchParams.toString()
+            return window.location.origin + window.location.pathname + (searchParams ? "?" + searchParams : "");
         }
 
         function generateDebug() {
