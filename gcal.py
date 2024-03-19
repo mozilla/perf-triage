@@ -86,7 +86,9 @@ IN_AUTOMATION = True if os.environ.get('CI') else False  # CI is always true on 
 
 DESCRIPTION = """{lead_sheriff} as Triage Sheriff #1, can you please take the lead to coordinate a date/time this week?
 
-For the latest guidelines, please see https://wiki.mozilla.org/Performance/Triage."""
+For the latest guidelines, please see https://wiki.mozilla.org/Performance/Triage.
+
+-- Sent by the friendly scripts at https://github.com/mozilla/perf-triage/"""
 
 
 class CredentialException(Exception):
