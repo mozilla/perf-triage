@@ -25,7 +25,7 @@ jobs:
       env:
         PERF_TRIAGE_BOT_CACHED_USER_SECRETS: ${{ secrets.PERF_TRIAGE_BOT_CACHED_USER_SECRETS }}
       run: |
-        python rotation.py --production
+        python rotation.py --production --debug
 
     - name: Push results
       run: |
