@@ -14,6 +14,9 @@ import random
 DATE = datetime.now(timezone.utc)
 SAVED_ROTATIONS_PATH = Path("rotations.pickle")
 
+logger = logging.getLogger()
+ch = logging.StreamHandler()
+logger.addHandler(ch)
 
 class Geo(Enum):
     AMERICAS = "🌎"
@@ -80,6 +83,8 @@ MEMBERS = [
 
 def parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--debug", action="store_true", help="Run in debug mode (extra logging)")
+    parser.add_argument("--force", action="store_true", help="Ignore cached rotations and regenerate")
     parser.add_argument(
         "--production",
         action="store_true",
@@ -96,6 +101,7 @@ def load_rotations():
     try:
         with SAVED_ROTATIONS_PATH.open(mode="rb") as html:
             rotations = pickle.load(html)
+            logger.debug(f"Loading cached rotations from {SAVED_ROTATIONS_PATH}")
         if isinstance(rotations, list):
             # migrate to dict format with dates
             rotations_dict = {}
@@ -104,6 +110,7 @@ def load_rotations():
                 rotations_dict.setdefault(week, rotation)
             return rotations_dict
     except FileNotFoundError:
+        logger.debug("Cached rotations not found")
         rotations = {}
     return rotations
 
@@ -228,25 +235,31 @@ def generate_rotation(leaders, rotations):
     sheriff_candidates = MEMBERS.copy()
 
     # remove recent leaders from pool
-    for _, r in list(sorted(rotations.items()))[(len(leaders) // 2) * -1 :]:
+    for w, r in list(sorted(rotations.items()))[(len(leaders) // 2) * -1 :]:
         if r.leader in leader_candidates:
+            logger.debug(f"Removing {r.leader} from leader pool because they led on {w}")
             leader_candidates.remove(r.leader)
 
     # remove recent sheriffs from pools
     for w, r in list(sorted(rotations.items()))[-4:]:
         if r.leader in sheriff_candidates:
+            logger.debug(f"Removing {r.leader} from sheriff pool because they sheriffed on {w}")
             sheriff_candidates.remove(r.leader)
         for sheriff in r.sheriffs:
             if sheriff in leader_candidates:
+                logger.debug(f"Removing {sheriff} from leader pool because they sheriffed on {w}")
                 leader_candidates.remove(sheriff)
             if sheriff in sheriff_candidates:
+                logger.debug(f"Removing {sheriff} from sheriff pool because they sheriffed on {w}")
                 sheriff_candidates.remove(sheriff)
 
     # pick a leader
     leader = random.choice(leader_candidates)
+    logger.debug(f"Picked {leader} as leader")
 
     # remove leader from pool
     sheriff_candidates.remove(leader)
+    logger.debug(f"Removed {leader} from sheriff pool because they have been picked as the leader")
 
     # pick sheriffs from pool
     sheriffs = []
@@ -254,10 +267,14 @@ def generate_rotation(leaders, rotations):
         geos = {s.geo for s in [leader] + sheriffs}
         if len(geos) > 1:
             # remove sheriffs outside of selected geos from pool
-            sheriff_candidates = [c for c in sheriff_candidates if c.geo in geos]
+            for sheriff in [c for c in sheriff_candidates if c.geo not in geos]:
+                logger.debug(f"Removing {sheriff} from pool as they are in {sheriff.geo} and leader/sheriffs are in {geos}")
+                sheriff_candidates.remove(sheriff)
         if len(sheriff_candidates) > 0:
             random.shuffle(sheriff_candidates)
-            sheriffs.append(sheriff_candidates.pop())
+            sheriff = sheriff_candidates.pop()
+            sheriffs.append(sheriff)
+            logger.debug(f"Picked {sheriff} as sheriff")
     return Rotation(leader, sheriffs)
 
 
@@ -357,6 +374,7 @@ def get_week(date):
 
 def main():
     args = parse_args()
+    logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
 
     rotations = load_rotations()
     leaders = [m for m in MEMBERS if m.lead]
@@ -369,14 +387,14 @@ def main():
 
     print("\nThis week:")
     this_week = get_week(DATE)
-    if not rotations.get(this_week):
+    if args.force or not rotations.get(this_week):
         rotations[this_week] = generate_rotation(leaders, rotations)
     print(f"{this_week}: {rotations[this_week]}")
 
     print("\nNext week:")
     next_week = get_week(DATE + timedelta(weeks=1))
     generated_next_week = False
-    if not rotations.get(next_week):
+    if args.force or not rotations.get(next_week):
         generated_next_week = True
         rotations[next_week] = generate_rotation(leaders, rotations)
     print(f"{next_week}: {rotations[next_week]}")
