@@ -77,7 +77,7 @@ MEMBERS = [
         "Emilio Cobos Álvarez", "emilio", Geo.EUROPE_AFRICA, cal_override="ealvarez"
     ),
     Person("Iain Ireland", "iain", Geo.AMERICAS, cal_override="iireland"),
-    Person("Adam Brouwers-Harries", "aabh", Geo.EUROPE_AFRICA, cal_override="abrowuersharries"),
+    Person("Adam Brouwers-Harries", "aabh", Geo.EUROPE_AFRICA, cal_override="abrouwersharries"),
 ]
 
 
