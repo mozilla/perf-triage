@@ -207,6 +207,12 @@
                                     <a href="https://www.similarweb.com/top-websites/">Major</a>
                                 </label>
                             </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="pages-affected" id="pages-unclear"
+                                    data-multiplier="1" value="unclear">
+                                <label class="form-check-label" for="pages-unclear" data-toggle="tooltip"
+                                    title="Not enough information in the bug to tell how many websites are affected. Scores the same as Common.">Unclear</label>
+                            </div>
                         </div>
                     </div>
 
@@ -242,12 +248,28 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-9 offset-md-3">
-                            <div class="form-check">
-                                <input id="reproducible" class="form-check-input" type="checkbox" data-multiplier="2"
-                                    data-keywords="reproducible" name="reproducible" value="true">
-                                <label class="form-check-label" for="reproducible">Able to reproduce locally</label>
+                    <div class="row mt-2">
+                        <div class="col-md-3">
+                            <h6>Reproducibility:</h6>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="reproducible" id="reproducible-yes"
+                                    data-multiplier="2" data-keywords="reproducible" value="reproduced">
+                                <label class="form-check-label" for="reproducible-yes" data-toggle="tooltip"
+                                    title="Someone reproduced the bug locally.">Reproduced</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="reproducible" id="reproducible-no"
+                                    data-multiplier="0.5" value="not-reproduced">
+                                <label class="form-check-label" for="reproducible-no" data-toggle="tooltip"
+                                    title="Someone tried to reproduce the bug locally and could not.">Could not reproduce</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="reproducible"
+                                    id="reproducible-not-attempted" checked data-multiplier="1" value="not-attempted">
+                                <label class="form-check-label" for="reproducible-not-attempted" data-toggle="tooltip"
+                                    title="Nobody has tried to reproduce the bug yet. Does not change the score.">Not attempted</label>
                             </div>
                         </div>
                     </div>
@@ -329,8 +351,20 @@
 
         function populateFormFromURL() {
             var searchParams = new URLSearchParams(window.location.search);
-            for (const [name, value] of searchParams) {
-                document.querySelector(`[name="${name}"][value="${value}"]`).checked = true
+            for (let [name, value] of searchParams) {
+                // "reproducible" used to be a checkbox serialised as
+                // reproducible=true. Keep older links working.
+                if (name === "reproducible" && value === "true") {
+                    value = "reproduced";
+                }
+                const input = document.querySelector(
+                    `[name="${name}"][value="${value}"]`
+                );
+                // Ignore params that no longer match a field rather than
+                // letting one stale name abort the whole restore.
+                if (input) {
+                    input.checked = true;
+                }
             }
             refreshScore();
         }
